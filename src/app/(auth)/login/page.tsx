@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Shield } from "lucide-react";
 
@@ -11,7 +12,9 @@ export default function LoginPage() {
         </div>
         <p className="text-sm text-muted-foreground">Sign in to your account</p>
       </div>
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }
