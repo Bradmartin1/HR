@@ -8,7 +8,7 @@ interface Note {
   is_private: boolean | null;
   created_by: string;
   created_at: string;
-  author: { first_name: string; last_name: string } | null;
+  author: { full_name: string | null } | null;
 }
 
 interface NotesTabProps {
@@ -35,9 +35,7 @@ export function NotesTab({ notes }: NotesTabProps) {
                   <div className="flex items-start justify-between gap-2 flex-wrap">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">
-                        {note.author
-                          ? `${note.author.first_name} ${note.author.last_name}`
-                          : "Unknown"}
+                        {note.author?.full_name ?? "Unknown"}
                       </span>
                       {note.is_private && (
                         <Badge className="bg-red-100 text-red-800 hover:bg-red-100 text-xs">
