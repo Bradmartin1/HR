@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
       .eq("id", user.id)
       .single();
 
-    const role = (userData?.roles as { name: string } | null)?.name;
+    const role = (userData?.roles as unknown as { name: string } | null)?.name;
 
     const url = request.nextUrl.clone();
     switch (role) {

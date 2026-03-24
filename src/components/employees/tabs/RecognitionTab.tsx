@@ -4,13 +4,12 @@ import { formatDate, formatRelative } from "@/lib/utils/format";
 
 interface Giver {
   id: string;
-  first_name: string;
-  last_name: string;
+  full_name: string | null;
 }
 
 interface RecognitionEvent {
   id: string;
-  category: string | null;
+  category_id: string | null;
   message: string | null;
   points: number | null;
   created_at: string;
@@ -77,9 +76,7 @@ export function RecognitionTab({ recognitions }: RecognitionTabProps) {
             <div className="space-y-4">
               {recognitions.map((event) => {
                 const giver = event.giver as Giver | null;
-                const giverName = giver
-                  ? `${giver.first_name} ${giver.last_name}`
-                  : "Anonymous";
+                const giverName = giver?.full_name ?? "Anonymous";
 
                 return (
                   <div
@@ -92,13 +89,9 @@ export function RecognitionTab({ recognitions }: RecognitionTabProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-2 flex-wrap">
-                          {event.category && (
-                            <span
-                              className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium ${
-                                CATEGORY_COLORS[event.category] ?? "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {event.category.replace(/_/g, " ")}
+                          {event.category_id && (
+                            <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                              Recognition
                             </span>
                           )}
                           {event.points != null && event.points > 0 && (

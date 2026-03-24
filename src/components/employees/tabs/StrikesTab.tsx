@@ -10,13 +10,13 @@ import {
 
 interface StrikeEvent {
   id: string;
-  category: string | null;
-  level: number | null;
+  level: number;
   incident_date: string;
-  description: string | null;
-  is_voided: boolean | null;
+  description: string;
+  voided: boolean;
   voided_reason: string | null;
   created_at: string;
+  strike_categories?: { name: string } | null;
 }
 
 interface DisciplinaryAction {
@@ -24,7 +24,7 @@ interface DisciplinaryAction {
   action_type: string;
   effective_date: string;
   end_date: string | null;
-  notes: string | null;
+  details: string | null;
   strike_event_id: string | null;
 }
 
@@ -34,8 +34,8 @@ interface StrikesTabProps {
 }
 
 export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
-  const activeStrikes = strikes.filter((s) => !s.is_voided);
-  const voidedStrikes = strikes.filter((s) => s.is_voided);
+  const activeStrikes = strikes.filter((s) => !s.voided);
+  const voidedStrikes = strikes.filter((s) => s.voided);
 
   // Build a lookup of disciplinary actions by strike_event_id
   const actionsByStrike = disciplinaryActions.reduce<Record<string, DisciplinaryAction[]>>(
@@ -103,12 +103,12 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                       {/* Timeline dot */}
                       <div
                         className={`absolute -left-10 top-1.5 w-4 h-4 rounded-full border-2 border-background ${
-                          strike.is_voided ? "bg-gray-300" : level && level >= 3 ? "bg-red-500" : "bg-amber-400"
+                          strike.voided ? "bg-gray-300" : level && level >= 3 ? "bg-red-500" : "bg-amber-400"
                         }`}
                       />
                       <div
                         className={`rounded-lg border p-4 ${
-                          strike.is_voided ? "opacity-60 bg-muted/30" : "bg-card"
+                          strike.voided ? "opacity-60 bg-muted/30" : "bg-card"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2 flex-wrap">
@@ -120,12 +120,12 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                                 Level {level}{levelLabel ? ` – ${levelLabel}` : ""}
                               </span>
                             )}
-                            {strike.category && (
+                            {(strike.strike_categories as { name: string } | null)?.name && (
                               <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
-                                {strike.category.replace(/_/g, " ")}
+                                {(strike.strike_categories as { name: string } | null)?.name?.replace(/_/g, " ")}
                               </span>
                             )}
-                            {strike.is_voided && (
+                            {strike.voided && (
                               <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100 text-xs">
                                 Voided
                               </Badge>
@@ -138,7 +138,7 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                         {strike.description && (
                           <p className="mt-2 text-sm leading-relaxed">{strike.description}</p>
                         )}
-                        {strike.is_voided && strike.voided_reason && (
+                        {strike.voided && strike.voided_reason && (
                           <p className="mt-1.5 text-xs text-muted-foreground italic">
                             Void reason: {strike.voided_reason}
                           </p>
@@ -191,8 +191,8 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                     {DISCIPLINARY_ACTION_LABELS[action.action_type as DisciplinaryActionType] ??
                       action.action_type.replace(/_/g, " ")}
                   </p>
-                  {action.notes && (
-                    <p className="text-xs text-muted-foreground mt-0.5">{action.notes}</p>
+                  {action.details && (
+                    <p className="text-xs text-muted-foreground mt-0.5">{action.details}</p>
                   )}
                 </div>
                 <span className="text-xs text-muted-foreground whitespace-nowrap">

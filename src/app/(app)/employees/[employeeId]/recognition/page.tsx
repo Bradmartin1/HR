@@ -40,7 +40,7 @@ export default async function RecognitionPage({ params }: Props) {
     .from("recognition_events")
     .select(`
       *,
-      giver:giver_id(id, first_name, last_name)
+      giver:users!recognition_events_giver_id_fkey(id, full_name)
     `)
     .eq("recipient_id", employeeId)
     .order("created_at", { ascending: false });
@@ -52,7 +52,7 @@ export default async function RecognitionPage({ params }: Props) {
         description={`${(employee.job_titles as { title: string } | null)?.title ?? "—"} · ${(employee.departments as { name: string } | null)?.name ?? "—"} · Hired ${formatDate(employee.hire_date)}`}
       />
       <EmployeeProfileTabs employeeId={employeeId} activeTab="recognition" role={session.role} />
-      <RecognitionTab recognitions={recognitions ?? []} />
+      <RecognitionTab recognitions={(recognitions ?? []) as unknown as Parameters<typeof RecognitionTab>[0]["recognitions"]} />
     </div>
   );
 }

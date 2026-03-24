@@ -39,7 +39,7 @@ export default async function StrikesPage({ params }: Props) {
   const [{ data: strikes }, { data: disciplinaryActions }] = await Promise.all([
     supabase
       .from("strike_events")
-      .select("*")
+      .select("*, strike_categories(name)")
       .eq("employee_id", employeeId)
       .order("incident_date", { ascending: false }),
     supabase

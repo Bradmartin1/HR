@@ -23,11 +23,10 @@ interface BenefitsRecord {
   id: string;
   benefit_type: string;
   plan_name: string | null;
-  effective_date: string;
+  enrollment_date: string | null;
   end_date: string | null;
-  employee_cost: number | null;
-  employer_cost: number | null;
-  status: string | null;
+  employee_contribution: number | null;
+  employer_contribution: number | null;
 }
 
 interface CompensationTabProps {
@@ -44,12 +43,6 @@ const PAY_TYPE_LABELS: Record<string, string> = {
   contract: "Contract",
 };
 
-const BENEFIT_STATUS_COLORS: Record<string, string> = {
-  active: "bg-green-100 text-green-800",
-  inactive: "bg-gray-100 text-gray-800",
-  pending: "bg-yellow-100 text-yellow-800",
-  terminated: "bg-red-100 text-red-800",
-};
 
 export function CompensationTab({
   compensationRecords,
@@ -160,11 +153,10 @@ export function CompensationTab({
                 <TableRow>
                   <TableHead>Benefit Type</TableHead>
                   <TableHead>Plan</TableHead>
-                  <TableHead>Effective Date</TableHead>
+                  <TableHead>Enrollment Date</TableHead>
                   <TableHead>End Date</TableHead>
                   <TableHead>Employee Cost</TableHead>
                   <TableHead>Employer Cost</TableHead>
-                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -174,7 +166,9 @@ export function CompensationTab({
                       {record.benefit_type.replace(/_/g, " ")}
                     </TableCell>
                     <TableCell className="text-sm">{record.plan_name ?? "—"}</TableCell>
-                    <TableCell className="text-sm">{formatDate(record.effective_date)}</TableCell>
+                    <TableCell className="text-sm">
+                      {record.enrollment_date ? formatDate(record.enrollment_date) : "—"}
+                    </TableCell>
                     <TableCell className="text-sm">
                       {record.end_date ? (
                         formatDate(record.end_date)
@@ -182,21 +176,8 @@ export function CompensationTab({
                         <span className="text-muted-foreground">Current</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm">{formatCurrency(record.employee_cost)}</TableCell>
-                    <TableCell className="text-sm">{formatCurrency(record.employer_cost)}</TableCell>
-                    <TableCell>
-                      {record.status ? (
-                        <span
-                          className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
-                            BENEFIT_STATUS_COLORS[record.status] ?? "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {record.status}
-                        </span>
-                      ) : (
-                        "—"
-                      )}
-                    </TableCell>
+                    <TableCell className="text-sm">{formatCurrency(record.employee_contribution)}</TableCell>
+                    <TableCell className="text-sm">{formatCurrency(record.employer_contribution)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

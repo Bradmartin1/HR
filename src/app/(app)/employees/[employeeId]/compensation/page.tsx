@@ -45,7 +45,7 @@ export default async function CompensationPage({ params }: Props) {
       .from("benefits_records")
       .select("*")
       .eq("employee_id", employeeId)
-      .order("effective_date", { ascending: false }),
+      .order("enrollment_date", { ascending: false }),
   ]);
 
   return (

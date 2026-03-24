@@ -40,7 +40,7 @@ export default async function OnboardingPage({ params }: Props) {
     .from("employee_onboarding_progress")
     .select(`
       *,
-      onboarding_tasks(id, title, description, category, is_required, due_days_after_hire)
+      onboarding_tasks(id, title, description, task_type, is_required, due_days_from_hire)
     `)
     .eq("employee_id", employeeId)
     .order("created_at", { ascending: true });

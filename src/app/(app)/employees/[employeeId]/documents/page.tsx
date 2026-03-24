@@ -40,7 +40,7 @@ export default async function DocumentsPage({ params }: Props) {
     .from("employee_documents")
     .select(`
       *,
-      document_types(id, name, requires_expiry, requires_acknowledgement)
+      document_types(id, name, requires_ack)
     `)
     .eq("employee_id", employeeId)
     .order("created_at", { ascending: false });

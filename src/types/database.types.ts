@@ -21,6 +21,7 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["roles"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["roles"]["Row"]>;
+        Relationships: [];
       };
       users: {
         Row: {
@@ -36,6 +37,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["users"]["Row"], "id" | "created_at" | "updated_at"> & { id: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["users"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "users_role_id_fkey";
+            columns: ["role_id"];
+            isOneToOne: true;
+            referencedRelation: "roles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       locations: {
         Row: {
@@ -49,6 +59,7 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["locations"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["locations"]["Row"]>;
+        Relationships: [];
       };
       departments: {
         Row: {
@@ -65,6 +76,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["departments"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["departments"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "departments_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "departments_pto_policy_id_fkey";
+            columns: ["pto_policy_id"];
+            isOneToOne: false;
+            referencedRelation: "pto_policies";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       department_managers: {
         Row: {
@@ -76,6 +103,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["department_managers"]["Row"], "id" | "assigned_at"> & { id?: string; assigned_at?: string };
         Update: Partial<Database["public"]["Tables"]["department_managers"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "department_managers_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "department_managers_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       job_titles: {
         Row: {
@@ -88,6 +131,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["job_titles"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["job_titles"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "job_titles_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       employees: {
         Row: {
@@ -132,6 +184,50 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["employees"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["employees"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "employees_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employees_job_title_id_fkey";
+            columns: ["job_title_id"];
+            isOneToOne: false;
+            referencedRelation: "job_titles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employees_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employees_manager_id_fkey";
+            columns: ["manager_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employees_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employees_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       compensation_records: {
         Row: {
@@ -148,6 +244,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["compensation_records"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["compensation_records"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "compensation_records_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "compensation_records_approved_by_fkey";
+            columns: ["approved_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       benefits_records: {
         Row: {
@@ -164,6 +276,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["benefits_records"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["benefits_records"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "benefits_records_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       document_types: {
         Row: {
@@ -175,6 +296,7 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["document_types"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["document_types"]["Row"]>;
+        Relationships: [];
       };
       employee_documents: {
         Row: {
@@ -193,6 +315,29 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["employee_documents"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["employee_documents"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "employee_documents_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employee_documents_document_type_id_fkey";
+            columns: ["document_type_id"];
+            isOneToOne: false;
+            referencedRelation: "document_types";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employee_documents_uploaded_by_fkey";
+            columns: ["uploaded_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       acknowledgements: {
         Row: {
@@ -204,6 +349,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["acknowledgements"]["Row"], "id"> & { id?: string };
         Update: Partial<Database["public"]["Tables"]["acknowledgements"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "acknowledgements_document_id_fkey";
+            columns: ["document_id"];
+            isOneToOne: false;
+            referencedRelation: "employee_documents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "acknowledgements_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       onboarding_templates: {
         Row: {
@@ -218,6 +379,29 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["onboarding_templates"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["onboarding_templates"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_templates_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "onboarding_templates_job_title_id_fkey";
+            columns: ["job_title_id"];
+            isOneToOne: false;
+            referencedRelation: "job_titles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "onboarding_templates_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       onboarding_tasks: {
         Row: {
@@ -235,6 +419,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["onboarding_tasks"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["onboarding_tasks"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_tasks_template_id_fkey";
+            columns: ["template_id"];
+            isOneToOne: false;
+            referencedRelation: "onboarding_templates";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "onboarding_tasks_document_type_id_fkey";
+            columns: ["document_type_id"];
+            isOneToOne: false;
+            referencedRelation: "document_types";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       employee_onboarding_progress: {
         Row: {
@@ -250,6 +450,29 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["employee_onboarding_progress"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["employee_onboarding_progress"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "employee_onboarding_progress_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employee_onboarding_progress_task_id_fkey";
+            columns: ["task_id"];
+            isOneToOne: false;
+            referencedRelation: "onboarding_tasks";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employee_onboarding_progress_completed_by_fkey";
+            columns: ["completed_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       performance_review_cycles: {
         Row: {
@@ -266,6 +489,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["performance_review_cycles"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["performance_review_cycles"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "performance_review_cycles_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "performance_review_cycles_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       performance_review_templates: {
         Row: {
@@ -280,6 +519,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["performance_review_templates"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["performance_review_templates"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "performance_review_templates_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "performance_review_templates_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       performance_reviews: {
         Row: {
@@ -300,6 +555,36 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["performance_reviews"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["performance_reviews"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "performance_reviews_cycle_id_fkey";
+            columns: ["cycle_id"];
+            isOneToOne: false;
+            referencedRelation: "performance_review_cycles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "performance_reviews_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "performance_reviews_reviewer_id_fkey";
+            columns: ["reviewer_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "performance_reviews_template_id_fkey";
+            columns: ["template_id"];
+            isOneToOne: false;
+            referencedRelation: "performance_review_templates";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       goals: {
         Row: {
@@ -317,6 +602,29 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["goals"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["goals"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "goals_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "goals_review_id_fkey";
+            columns: ["review_id"];
+            isOneToOne: false;
+            referencedRelation: "performance_reviews";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "goals_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       recognition_categories: {
         Row: {
@@ -329,6 +637,7 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["recognition_categories"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["recognition_categories"]["Row"]>;
+        Relationships: [];
       };
       recognition_events: {
         Row: {
@@ -345,6 +654,36 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["recognition_events"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["recognition_events"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "recognition_events_recipient_id_fkey";
+            columns: ["recipient_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "recognition_events_giver_id_fkey";
+            columns: ["giver_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "recognition_events_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "recognition_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "recognition_events_approved_by_fkey";
+            columns: ["approved_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       strike_categories: {
         Row: {
@@ -356,6 +695,7 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["strike_categories"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["strike_categories"]["Row"]>;
+        Relationships: [];
       };
       strike_rules: {
         Row: {
@@ -371,6 +711,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["strike_rules"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["strike_rules"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "strike_rules_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "strike_rules_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "strike_categories";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       strike_events: {
         Row: {
@@ -390,6 +746,43 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["strike_events"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["strike_events"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "strike_events_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "strike_events_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "strike_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "strike_events_issued_by_fkey";
+            columns: ["issued_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "strike_events_approved_by_fkey";
+            columns: ["approved_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "strike_events_voided_by_fkey";
+            columns: ["voided_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       disciplinary_actions: {
         Row: {
@@ -407,6 +800,29 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["disciplinary_actions"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["disciplinary_actions"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "disciplinary_actions_strike_event_id_fkey";
+            columns: ["strike_event_id"];
+            isOneToOne: false;
+            referencedRelation: "strike_events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "disciplinary_actions_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "disciplinary_actions_issued_by_fkey";
+            columns: ["issued_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       attendance_events: {
         Row: {
@@ -422,6 +838,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["attendance_events"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["attendance_events"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "attendance_events_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "attendance_events_entered_by_fkey";
+            columns: ["entered_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       pto_policies: {
         Row: {
@@ -440,6 +872,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["pto_policies"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["pto_policies"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "pto_policies_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       pto_balances: {
         Row: {
@@ -456,6 +897,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["pto_balances"]["Row"], "id" | "updated_at"> & { id?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["pto_balances"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "pto_balances_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pto_balances_policy_id_fkey";
+            columns: ["policy_id"];
+            isOneToOne: false;
+            referencedRelation: "pto_policies";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       pto_requests: {
         Row: {
@@ -475,6 +932,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["pto_requests"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["pto_requests"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "pto_requests_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pto_requests_reviewed_by_fkey";
+            columns: ["reviewed_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       shift_templates: {
         Row: {
@@ -491,6 +964,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["shift_templates"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["shift_templates"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "shift_templates_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       schedules: {
         Row: {
@@ -509,6 +991,36 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["schedules"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["schedules"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "schedules_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "schedules_shift_template_id_fkey";
+            columns: ["shift_template_id"];
+            isOneToOne: false;
+            referencedRelation: "shift_templates";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "schedules_location_id_fkey";
+            columns: ["location_id"];
+            isOneToOne: false;
+            referencedRelation: "locations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "schedules_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       surveys: {
         Row: {
@@ -528,6 +1040,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["surveys"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["surveys"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "surveys_target_dept_id_fkey";
+            columns: ["target_dept_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "surveys_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       survey_responses: {
         Row: {
@@ -539,6 +1067,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["survey_responses"]["Row"], "id"> & { id?: string };
         Update: Partial<Database["public"]["Tables"]["survey_responses"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_survey_id_fkey";
+            columns: ["survey_id"];
+            isOneToOne: false;
+            referencedRelation: "surveys";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "survey_responses_respondent_id_fkey";
+            columns: ["respondent_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       notifications: {
         Row: {
@@ -556,6 +1100,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["notifications"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["notifications"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "notifications_recipient_id_fkey";
+            columns: ["recipient_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       audit_logs: {
         Row: {
@@ -572,6 +1125,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["audit_logs"]["Row"], "id" | "created_at"> & { id?: number; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["audit_logs"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       notes: {
         Row: {
@@ -586,6 +1148,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["notes"]["Row"], "id" | "created_at" | "updated_at"> & { id?: string; created_at?: string; updated_at?: string };
         Update: Partial<Database["public"]["Tables"]["notes"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "notes_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       attachments: {
         Row: {
@@ -601,6 +1172,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["attachments"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["attachments"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "attachments_uploaded_by_fkey";
+            columns: ["uploaded_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       trainings: {
         Row: {
@@ -614,6 +1194,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["trainings"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["trainings"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "trainings_department_id_fkey";
+            columns: ["department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       training_assignments: {
         Row: {
@@ -626,6 +1215,29 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["training_assignments"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["training_assignments"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "training_assignments_training_id_fkey";
+            columns: ["training_id"];
+            isOneToOne: false;
+            referencedRelation: "trainings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "training_assignments_employee_id_fkey";
+            columns: ["employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "training_assignments_assigned_by_fkey";
+            columns: ["assigned_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       training_completions: {
         Row: {
@@ -639,6 +1251,22 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["training_completions"]["Row"], "id"> & { id?: string };
         Update: Partial<Database["public"]["Tables"]["training_completions"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "training_completions_assignment_id_fkey";
+            columns: ["assignment_id"];
+            isOneToOne: false;
+            referencedRelation: "training_assignments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "training_completions_verified_by_fkey";
+            columns: ["verified_by"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       performance_ratings: {
         Row: {
@@ -652,6 +1280,15 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["performance_ratings"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Database["public"]["Tables"]["performance_ratings"]["Row"]>;
+        Relationships: [
+          {
+            foreignKeyName: "performance_ratings_review_id_fkey";
+            columns: ["review_id"];
+            isOneToOne: false;
+            referencedRelation: "performance_reviews";
+            referencedColumns: ["id"];
+          }
+        ];
       };
     };
     Views: Record<string, never>;

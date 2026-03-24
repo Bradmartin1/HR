@@ -12,16 +12,15 @@ interface OnboardingTask {
   id: string;
   title: string;
   description: string | null;
-  category: string | null;
+  task_type: string | null;
   is_required: boolean | null;
-  due_days_after_hire: number | null;
+  due_days_from_hire: number | null;
 }
 
 interface OnboardingProgress {
   id: string;
   status: string;
   completed_at: string | null;
-  due_date: string | null;
   notes: string | null;
   onboarding_tasks?: OnboardingTask | null;
 }
@@ -61,7 +60,7 @@ export function OnboardingTab({ progress, employeeId, role }: OnboardingTabProps
   const categories = Array.from(
     new Set(
       items
-        .map((p) => (p.onboarding_tasks as OnboardingTask | null)?.category)
+        .map((p) => (p.onboarding_tasks as OnboardingTask | null)?.task_type)
         .filter(Boolean)
     )
   ) as string[];
@@ -100,14 +99,14 @@ export function OnboardingTab({ progress, employeeId, role }: OnboardingTabProps
     categories.length > 0
       ? categories.reduce<Record<string, OnboardingProgress[]>>((acc, cat) => {
           acc[cat] = items.filter(
-            (p) => (p.onboarding_tasks as OnboardingTask | null)?.category === cat
+            (p) => (p.onboarding_tasks as OnboardingTask | null)?.task_type === cat
           );
           return acc;
         }, {})
       : { "All Tasks": items };
 
   const uncategorized = items.filter(
-    (p) => !(p.onboarding_tasks as OnboardingTask | null)?.category
+    (p) => !(p.onboarding_tasks as OnboardingTask | null)?.task_type
   );
   if (uncategorized.length > 0 && categories.length > 0) {
     groupedByCategory["Other"] = uncategorized;
@@ -147,7 +146,7 @@ export function OnboardingTab({ progress, employeeId, role }: OnboardingTabProps
                 const task = item.onboarding_tasks as OnboardingTask | null;
                 const isCompleted = item.status === "completed";
                 const isOverdue =
-                  item.due_date && new Date(item.due_date) < new Date() && !isCompleted;
+                  false; // due_date computed from task.due_days_from_hire + hire_date if needed
 
                 return (
                   <div
@@ -188,8 +187,8 @@ export function OnboardingTab({ progress, employeeId, role }: OnboardingTabProps
                         <p className="text-xs text-muted-foreground mt-0.5">{task.description}</p>
                       )}
                       <div className="flex gap-4 mt-1 text-xs text-muted-foreground">
-                        {item.due_date && (
-                          <span>Due: {formatDate(item.due_date)}</span>
+                        {task?.due_days_from_hire != null && (
+                          <span>Due: {task.due_days_from_hire} days from hire</span>
                         )}
                         {item.completed_at && (
                           <span>Completed: {formatDate(item.completed_at)}</span>

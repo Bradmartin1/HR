@@ -41,7 +41,7 @@ export default async function NotesPage({ params }: Props) {
     .from("notes")
     .select(`
       id, content, is_private, created_by, created_at,
-      author:created_by(first_name, last_name)
+      author:created_by(full_name)
     `)
     .eq("entity_type", "employee")
     .eq("entity_id", employeeId)

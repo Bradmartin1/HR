@@ -18,17 +18,15 @@ import { type Role } from "@/lib/constants/roles";
 interface DocumentType {
   id: string;
   name: string;
-  requires_expiry: boolean | null;
-  requires_acknowledgement: boolean | null;
+  requires_ack: boolean | null;
 }
 
 interface Document {
   id: string;
   name: string;
-  file_path: string | null;
+  storage_path: string;
   expiry_date: string | null;
-  is_sensitive: boolean | null;
-  acknowledged_at: string | null;
+  is_sensitive: boolean;
   created_at: string;
   document_types?: DocumentType | null;
 }
@@ -117,8 +115,8 @@ export function DocumentsTab({ documents, employeeId, role }: DocumentsTabProps)
               <TableBody>
                 {documents.map((doc) => {
                   const docType = doc.document_types as DocumentType | null;
-                  const requiresAck = docType?.requires_acknowledgement ?? false;
-                  const needsAck = requiresAck && !doc.acknowledged_at;
+                  const requiresAck = docType?.requires_ack ?? false;
+                  const needsAck = requiresAck;
 
                   return (
                     <TableRow key={doc.id}>
@@ -157,15 +155,9 @@ export function DocumentsTab({ documents, employeeId, role }: DocumentsTabProps)
                             </Badge>
                           )}
                           {requiresAck && (
-                            doc.acknowledged_at ? (
-                              <Badge className="bg-green-100 text-green-800 hover:bg-green-100 text-xs">
-                                Acknowledged
-                              </Badge>
-                            ) : (
-                              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 text-xs">
-                                Needs Acknowledgement
-                              </Badge>
-                            )
+                            <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 text-xs">
+                              Needs Acknowledgement
+                            </Badge>
                           )}
                         </div>
                       </TableCell>
@@ -188,7 +180,7 @@ export function DocumentsTab({ documents, employeeId, role }: DocumentsTabProps)
                             size="sm"
                             variant="outline"
                             onClick={() => handleView(doc.id)}
-                            disabled={loadingId === doc.id || !doc.file_path}
+                            disabled={loadingId === doc.id || !doc.storage_path}
                           >
                             {loadingId === doc.id ? "Opening..." : "View"}
                           </Button>

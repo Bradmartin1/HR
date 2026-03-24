@@ -13,10 +13,10 @@ import { formatDate } from "@/lib/utils/format";
 interface PtoBalance {
   id: string;
   pto_type: string;
-  balance: number;
-  used: number | null;
-  accrued: number | null;
-  year: number | null;
+  balance_hours: number;
+  used_hours: number;
+  accrued_hours: number;
+  year: number;
 }
 
 interface PtoRequest {
@@ -24,10 +24,10 @@ interface PtoRequest {
   pto_type: string;
   start_date: string;
   end_date: string;
-  hours_requested: number | null;
+  hours_requested: number;
   status: string;
-  reason: string | null;
-  reviewer_notes: string | null;
+  notes: string | null;
+  review_notes: string | null;
   created_at: string;
 }
 
@@ -68,9 +68,9 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {balances.map((balance) => {
-                const used = balance.used ?? 0;
-                const accrued = balance.accrued ?? balance.balance;
-                const remaining = balance.balance;
+                const used = balance.used_hours;
+                const accrued = balance.accrued_hours;
+                const remaining = balance.balance_hours;
                 const usedPct = accrued > 0 ? Math.min(100, Math.round((used / accrued) * 100)) : 0;
 
                 return (
@@ -82,9 +82,7 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
                       <p className="text-sm font-medium">
                         {PTO_TYPE_LABELS[balance.pto_type] ?? balance.pto_type.replace(/_/g, " ")}
                       </p>
-                      {balance.year && (
-                        <span className="text-xs text-muted-foreground">{balance.year}</span>
-                      )}
+                      <span className="text-xs text-muted-foreground">{balance.year}</span>
                     </div>
                     <dl className="grid grid-cols-3 gap-2 text-center">
                       <div>
@@ -144,7 +142,7 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
                     <TableCell className="text-sm">{formatDate(request.start_date)}</TableCell>
                     <TableCell className="text-sm">{formatDate(request.end_date)}</TableCell>
                     <TableCell className="text-sm">
-                      {request.hours_requested != null ? `${request.hours_requested}h` : "—"}
+                      {`${request.hours_requested}h`}
                     </TableCell>
                     <TableCell>
                       <span
@@ -156,7 +154,7 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
                       </span>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-[160px] truncate">
-                      {request.reason ?? "—"}
+                      {request.notes ?? "—"}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDate(request.created_at)}
