@@ -10,11 +10,14 @@ import {
 
 interface StrikeEvent {
   id: string;
-  level: number;
+  level: number | null;
   incident_date: string;
   description: string;
   voided: boolean;
   voided_reason: string | null;
+  points: number | null;
+  is_weekend: boolean;
+  notes: string | null;
   created_at: string;
   strike_categories?: { name: string } | null;
 }
