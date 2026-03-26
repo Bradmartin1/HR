@@ -81,20 +81,22 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="flex h-full w-60 flex-col" style={{ backgroundColor: "hsl(343 23% 6%)" }}>
-      <div className="flex h-14 items-center px-5 border-b" style={{ borderColor: "hsl(343 15% 14%)" }}>
+    <aside className="flex h-full w-60 flex-col bg-sidebar border-r border-sidebar-border">
+      {/* Brand */}
+      <div className="flex h-14 items-center px-5 border-b border-sidebar-border">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded" style={{ backgroundColor: "#2DBDB6" }}>
-            <span className="text-xs font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>RP</span>
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
+            <span className="font-heading text-sm font-bold text-white tracking-wide">RP</span>
           </div>
           <div>
-            <div className="text-sm leading-tight tracking-wide" style={{ color: "#FFEB95", fontFamily: "var(--font-heading)", letterSpacing: "0.08em" }}>RUSHTOWN</div>
-            <div className="text-[10px] uppercase tracking-wider" style={{ color: "#2DBDB6" }}>HR Platform</div>
+            <div className="font-heading text-[15px] leading-tight tracking-widest text-[#FFEB95]">RUSHTOWN</div>
+            <div className="text-[10px] font-medium uppercase tracking-wider text-accent">HR Platform</div>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-4">
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-5">
         {NAV_GROUPS.map((group) => {
           const visibleItems = group.items.filter((item) => {
             if (!user) return false;
@@ -105,7 +107,7 @@ export function Sidebar() {
 
           return (
             <div key={group.label}>
-              <div className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: "hsl(77 3% 45%)" }}>
+              <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sidebar-foreground/35">
                 {group.label}
               </div>
               <ul className="space-y-0.5">
@@ -116,20 +118,16 @@ export function Sidebar() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className="group flex items-center gap-3 rounded-md px-2.5 py-2 text-sm transition-all duration-150"
-                        style={active ? {
-                          backgroundColor: "hsl(177 61% 46% / 0.15)",
-                          color: "hsl(177 61% 66%)",
-                          borderLeft: "2px solid hsl(177 61% 46%)",
-                          paddingLeft: "calc(0.625rem - 2px)",
-                          fontWeight: "500",
-                        } : {
-                          color: "hsl(0 0% 65%)",
-                        }}
+                        className={cn(
+                          "group flex items-center gap-3 rounded-md px-2.5 py-[7px] text-[13px] transition-all duration-150",
+                          active
+                            ? "bg-sidebar-primary/15 text-sidebar-primary font-medium border-l-2 border-sidebar-primary pl-[calc(0.625rem-2px)]"
+                            : "text-sidebar-foreground/60 hover:text-sidebar-foreground/85 hover:bg-sidebar-accent/50"
+                        )}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span>{item.label}</span>
-                        {active && <ChevronRight className="ml-auto h-3 w-3 opacity-50" />}
+                        {active && <ChevronRight className="ml-auto h-3 w-3 opacity-40" />}
                       </Link>
                     </li>
                   );
@@ -140,17 +138,18 @@ export function Sidebar() {
         })}
       </nav>
 
+      {/* User */}
       {user && (
-        <div className="border-t p-3" style={{ borderColor: "hsl(343 15% 14%)" }}>
-          <div className="flex items-center gap-2.5 rounded-md px-2 py-2" style={{ backgroundColor: "hsl(343 20% 12%)" }}>
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white" style={{ backgroundColor: "hsl(188 100% 26%)" }}>
+        <div className="border-t border-sidebar-border p-3">
+          <div className="flex items-center gap-2.5 rounded-lg bg-sidebar-accent px-2.5 py-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
               {(user.fullName ?? user.email ?? "?").slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-xs font-medium" style={{ color: "hsl(0 0% 92%)" }}>
+              <div className="truncate text-xs font-medium text-sidebar-foreground/90">
                 {user.fullName ?? user.email}
               </div>
-              <div className="text-[10px] capitalize" style={{ color: "hsl(77 3% 55%)" }}>
+              <div className="text-[10px] capitalize text-sidebar-foreground/40">
                 {user.role.replace(/_/g, " ")}
               </div>
             </div>

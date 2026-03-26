@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils/format";
 
 interface OverviewTabProps {
@@ -22,44 +21,44 @@ interface OverviewTabProps {
   };
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  active: "bg-green-100 text-green-800",
-  inactive: "bg-gray-100 text-gray-800",
-  terminated: "bg-red-100 text-red-800",
-  on_leave: "bg-yellow-100 text-yellow-800",
+const STATUS_STYLES: Record<string, string> = {
+  active:     "status-active",
+  inactive:   "status-inactive",
+  terminated: "status-terminated",
+  on_leave:   "status-on-leave",
 };
 
 export function OverviewTab({ employee }: OverviewTabProps) {
   const fields = [
     { label: "Employee Number", value: employee.employee_number },
     { label: "Status", value: (
-      <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ${STATUS_COLORS[employee.status] ?? "bg-gray-100"}`}>
+      <span className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-[11px] font-semibold capitalize ${STATUS_STYLES[employee.status] ?? "status-inactive"}`}>
         {employee.status.replace("_", " ")}
       </span>
     )},
-    { label: "Employment Type", value: employee.employment_type.replace("_", " ") },
-    { label: "Department", value: (employee.departments as {name: string} | null)?.name ?? "—" },
-    { label: "Job Title", value: (employee.job_titles as {title: string} | null)?.title ?? "—" },
-    { label: "Location", value: (employee.locations as {name: string} | null)?.name ?? "—" },
-    { label: "Manager", value: employee.manager ? `${(employee.manager as {first_name: string; last_name: string}).first_name} ${(employee.manager as {first_name: string; last_name: string}).last_name}` : "—" },
+    { label: "Employment Type", value: <span className="capitalize">{employee.employment_type.replace("_", " ")}</span> },
+    { label: "Department", value: (employee.departments as {name: string} | null)?.name ?? "\u2014" },
+    { label: "Job Title", value: (employee.job_titles as {title: string} | null)?.title ?? "\u2014" },
+    { label: "Location", value: (employee.locations as {name: string} | null)?.name ?? "\u2014" },
+    { label: "Manager", value: employee.manager ? `${(employee.manager as {first_name: string; last_name: string}).first_name} ${(employee.manager as {first_name: string; last_name: string}).last_name}` : "\u2014" },
     { label: "Hire Date", value: formatDate(employee.hire_date) },
-    { label: "Termination Date", value: employee.termination_date ? formatDate(employee.termination_date) : "—" },
-    { label: "Work Email", value: employee.work_email ?? "—" },
-    { label: "Work Phone", value: employee.work_phone ?? "—" },
+    { label: "Termination Date", value: employee.termination_date ? formatDate(employee.termination_date) : "\u2014" },
+    { label: "Work Email", value: employee.work_email ?? "\u2014" },
+    { label: "Work Phone", value: employee.work_phone ?? "\u2014" },
     { label: "CDL Driver", value: employee.is_driver ? "Yes" : "No" },
   ];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Employee Summary</CardTitle>
+        <CardTitle>Employee Summary</CardTitle>
       </CardHeader>
       <CardContent>
-        <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {fields.map(({ label, value }) => (
-            <div key={label}>
-              <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{label}</dt>
-              <dd className="mt-1 text-sm">{value}</dd>
+            <div key={label} className="space-y-1">
+              <dt className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">{label}</dt>
+              <dd className="text-sm font-medium text-foreground">{value}</dd>
             </div>
           ))}
         </dl>

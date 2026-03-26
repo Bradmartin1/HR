@@ -3,64 +3,73 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-heading);
 }
 
 :root {
-  /* ── Brand Colors (from Rushtown Poultry Brand Guide) ── */
+  /* ═══════════════════════════════════════════════════════
+     RUSHTOWN POULTRY — Design Tokens
+     Brand Colors: #007384 #2DBDB6 #130C0E #8E9089 #FFEB95 #FFC20E #F15A22
+     ═══════════════════════════════════════════════════════ */
 
-  /* Primary: Deep Teal #007384 */
-  --primary: 188 100% 26%;
+  /* ── Core Brand Semantic Colors ── */
+  --primary: 188 100% 26%;          /* Deep Teal #007384 */
   --primary-foreground: 0 0% 100%;
 
-  /* Accent: Bright Teal #2DBDB6 */
-  --accent: 177 61% 46%;
+  --secondary: 180 25% 94%;         /* Very light teal tint */
+  --secondary-foreground: 188 80% 22%;
+
+  --accent: 177 61% 46%;            /* Bright Teal #2DBDB6 */
   --accent-foreground: 0 0% 100%;
 
-  /* Orange #F15A22 — used for destructive/alerts */
-  --destructive: 16 88% 54%;
+  --destructive: 16 88% 54%;        /* Orange #F15A22 */
   --destructive-foreground: 0 0% 100%;
 
-  /* Gold #FFC20E — used for warnings/highlights */
-  --brand-gold: 45 100% 53%;
-  --brand-gold-foreground: 0 0% 10%;
+  --warning: 45 100% 53%;           /* Gold #FFC20E */
+  --warning-foreground: 30 60% 16%;
 
-  /* Light Yellow #FFEB95 — subtle backgrounds */
-  --brand-gold-light: 49 100% 79%;
+  --success: 177 61% 38%;           /* Darker teal for success */
+  --success-foreground: 0 0% 100%;
 
-  /* Near Black #130C0E — sidebar, dark surfaces */
-  --brand-black: 343 23% 6%;
+  /* ── Surface & Text ── */
+  --background: 40 15% 97%;         /* Warm off-white */
+  --foreground: 340 20% 10%;        /* Near Black #130C0E derived */
 
-  /* Warm Gray #8E9089 — muted text */
-  --brand-gray: 80 3% 53%;
-
-  /* ── Semantic Tokens ── */
-  --background: 40 20% 97%;
-  --foreground: 343 23% 10%;
   --card: 0 0% 100%;
-  --card-foreground: 343 23% 10%;
+  --card-foreground: 340 20% 10%;
+
   --popover: 0 0% 100%;
-  --popover-foreground: 343 23% 10%;
-  --secondary: 177 30% 94%;
-  --secondary-foreground: 188 100% 20%;
-  --muted: 40 10% 94%;
-  --muted-foreground: 80 3% 45%;
-  --border: 40 12% 88%;
-  --input: 40 12% 88%;
+  --popover-foreground: 340 20% 10%;
+
+  --muted: 40 8% 93%;               /* Warm light gray */
+  --muted-foreground: 80 3% 42%;    /* Warm Gray #8E9089 derived */
+
+  /* ── Border & Input ── */
+  --border: 40 10% 87%;
+  --input: 40 10% 87%;
   --ring: 188 100% 26%;
+
   --radius: 0.5rem;
 
-  /* ── Sidebar (Near Black #130C0E base) ── */
-  --sidebar-background: 343 23% 6%;
-  --sidebar-foreground: 0 0% 95%;
+  /* ── Sidebar (Near Black #130C0E) ── */
+  --sidebar-background: 340 23% 6%;
+  --sidebar-foreground: 0 0% 94%;
   --sidebar-primary: 177 61% 46%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 343 20% 12%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-border: 343 15% 14%;
+  --sidebar-accent: 340 18% 12%;
+  --sidebar-accent-foreground: 0 0% 97%;
+  --sidebar-border: 340 14% 14%;
   --sidebar-ring: 177 61% 46%;
+
+  /* ── Chart Colors (brand-derived sequence) ── */
+  --chart-1: 188 100% 26%;   /* #007384 Deep Teal */
+  --chart-2: 177 61% 46%;    /* #2DBDB6 Bright Teal */
+  --chart-3: 45 100% 53%;    /* #FFC20E Gold */
+  --chart-4: 16 88% 54%;     /* #F15A22 Orange */
+  --chart-5: 80 3% 53%;      /* #8E9089 Warm Gray */
+  --chart-6: 49 100% 79%;    /* #FFEB95 Light Yellow */
 }
 
+/* ── Base Reset ── */
 * {
   border-color: hsl(var(--border));
 }
@@ -68,38 +77,45 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  font-feature-settings: "cv11", "ss01";
 }
 
-/* ── Brand Heading Font (Bebas Neue) ── */
-h1, h2, h3 {
-  font-family: var(--font-heading), system-ui, sans-serif;
-  letter-spacing: 0.02em;
+/* ── Typography: Heading Font Utility ──
+   Apply selectively via .font-heading class, NOT blanket on all h tags.
+   Bebas Neue is a display font — use it for page titles, hero text, nav brand.
+   Do NOT use it for CardTitle, form labels, or small UI headings. */
+.font-heading {
+  font-family: var(--font-heading), "Bebas Neue", "Impact", system-ui, sans-serif;
+  letter-spacing: 0.03em;
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: hsl(var(--muted)); }
-::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.5); }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.4); }
 
-/* ── Focus Rings ── */
+/* ── Focus ── */
 :focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
 
-/* ── Stat Card Accent Borders ── */
-.stat-card-teal { border-left: 3px solid #007384; }
-.stat-card-gold { border-left: 3px solid #FFC20E; }
-.stat-card-orange { border-left: 3px solid #F15A22; }
+/* ── Stat Card Left-Border Accents ── */
+.stat-card-teal   { border-left: 3px solid #007384; }
 .stat-card-accent { border-left: 3px solid #2DBDB6; }
+.stat-card-gold   { border-left: 3px solid #FFC20E; }
+.stat-card-orange { border-left: 3px solid #F15A22; }
 
-/* ── Brand Button Hover States ── */
-.brand-btn-primary {
-  background-color: #007384;
-  color: white;
-  transition: background-color 150ms;
-}
-.brand-btn-primary:hover {
-  background-color: #005f6d;
-}
+/* ── Status Color Utilities (brand-derived, consistent) ── */
+.status-active      { background-color: #e6f7f6; color: #005f6d; }
+.status-onboarding  { background-color: #e0f4f3; color: #007384; }
+.status-inactive    { background-color: #f0efee; color: #5c5b59; }
+.status-terminated  { background-color: #fde8e1; color: #b7411a; }
+.status-on-leave    { background-color: #fff8e1; color: #8a6b00; }
+.status-pending     { background-color: #fff8e1; color: #8a6b00; }
+.status-approved    { background-color: #e6f7f6; color: #005f6d; }
+.status-denied      { background-color: #fde8e1; color: #b7411a; }
+.status-overdue     { background-color: #fde8e1; color: #b7411a; }
+.status-warning     { background-color: #fff4cc; color: #7a5e00; }
+.status-critical    { background-color: #fdd9cc; color: #a33a14; }

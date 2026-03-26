@@ -19,10 +19,10 @@ const PAGE_TITLES: Record<string, string> = {
   "/departments": "Departments",
   "/onboarding": "Onboarding",
   "/onboarding/my-tasks": "My Tasks",
-  "/performance": "Performance Reviews",
+  "/performance": "Performance",
   "/recognition": "Recognition",
-  "/strikes": "Strikes & Discipline",
-  "/pto": "PTO Management",
+  "/strikes": "Points & Discipline",
+  "/pto": "PTO",
   "/schedules": "Schedules",
   "/attendance": "Attendance",
   "/surveys": "Surveys",
@@ -33,6 +33,7 @@ const PAGE_TITLES: Record<string, string> = {
 };
 
 function getPageTitle(pathname: string): string {
+  if (pathname.startsWith("/employees/") && pathname.includes("/new")) return "New Employee";
   if (pathname.startsWith("/employees/") && pathname.split("/").length > 3) return "Employee Profile";
   if (pathname.startsWith("/dashboard/")) return "Dashboard";
   return PAGE_TITLES[pathname] ?? "Rushtown HR";
@@ -51,28 +52,29 @@ export function Topbar() {
   };
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-white px-6 shadow-sm">
+    <header className="flex h-14 items-center justify-between border-b bg-card px-6">
       <div>
-        <h1 className="text-lg tracking-wide text-foreground" style={{ fontFamily: "var(--font-heading)" }}>{getPageTitle(pathname).toUpperCase()}</h1>
-        <p className="text-xs text-muted-foreground hidden sm:block">Rushtown Poultry · Internal HR Platform</p>
+        <h1 className="font-heading text-lg tracking-wide text-foreground uppercase">{getPageTitle(pathname)}</h1>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
+        {/* Notification bell */}
         <Button variant="ghost" size="icon" onClick={() => router.push("/notifications")} className="relative h-9 w-9 rounded-full">
           <Bell className="h-4 w-4 text-muted-foreground" />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold text-white" style={{ backgroundColor: "hsl(16 88% 54%)" }}>
+            <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[9px] font-bold text-white">
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
         </Button>
 
+        {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 h-9 px-2 rounded-full">
               <Avatar className="h-7 w-7">
                 <AvatarImage src={user?.avatarUrl ?? undefined} />
-                <AvatarFallback className="text-[11px] font-semibold text-white" style={{ backgroundColor: "hsl(188 100% 26%)" }}>
+                <AvatarFallback className="bg-primary text-[11px] font-semibold text-primary-foreground">
                   {getInitials(user?.fullName ?? user?.email)}
                 </AvatarFallback>
               </Avatar>

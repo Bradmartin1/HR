@@ -12,9 +12,9 @@ interface PageHeaderProps {
 export function PageHeader({ title, description, action, className, badge }: PageHeaderProps) {
   return (
     <div className={cn("flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between", className)}>
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <div className="flex items-center gap-2.5">
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
+          <h2 className="font-heading text-2xl tracking-wide text-foreground uppercase">{title}</h2>
           {badge}
         </div>
         {description && (
