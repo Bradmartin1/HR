@@ -8,13 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { AlertTriangle } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
 import Link from "next/link";
-
-const LEVEL_STYLES: Record<number, { label: string; bg: string; text: string; border: string }> = {
-  1: { label: "Level 1", bg: "hsl(49 100% 94%)", text: "hsl(45 100% 30%)", border: "hsl(45 100% 53%)" },
-  2: { label: "Level 2", bg: "hsl(38 100% 92%)", text: "hsl(30 90% 30%)", border: "hsl(30 90% 55%)" },
-  3: { label: "Level 3", bg: "hsl(16 88% 93%)", text: "hsl(16 88% 35%)", border: "hsl(16 88% 54%)" },
-  4: { label: "Level 4", bg: "hsl(0 80% 92%)",  text: "hsl(0 80% 30%)",  border: "hsl(0 80% 55%)" },
-};
+import { PointsBadge } from "@/components/strikes/PointsBadge";
+import { IssuePointDialog } from "@/components/strikes/IssuePointDialog";
+import { PolicyReferenceDialog } from "@/components/strikes/PolicyReferenceDialog";
 
 export default async function StrikesPage() {
   const session = await getSession();
@@ -26,9 +22,9 @@ export default async function StrikesPage() {
   const { data: strikes } = await supabase
     .from("strike_events")
     .select(`
-      id, level, incident_date, description, voided, created_at,
+      id, incident_date, description, voided, created_at, points, is_weekend, notes, level,
       employee:employees!strike_events_employee_id_fkey(id, first_name, last_name, departments(name)),
-      strike_categories(name),
+      strike_categories(name, code),
       issuer:users!strike_events_issued_by_fkey(full_name)
     `)
     .eq("voided", false)
@@ -38,37 +34,37 @@ export default async function StrikesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Strikes & Discipline"
-        description="Active disciplinary events across all departments"
+        title="Points & Discipline"
+        description="Attendance and performance point tracking"
+        action={
+          <div className="flex items-center gap-2">
+            <PolicyReferenceDialog />
+            <IssuePointDialog />
+          </div>
+        }
       />
 
       {!strikes || strikes.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
             <AlertTriangle className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <h3 className="text-base font-semibold">No active strikes</h3>
-            <p className="text-sm text-muted-foreground mt-1">Active disciplinary events will appear here.</p>
+            <h3 className="text-base font-semibold">No active points</h3>
+            <p className="text-sm text-muted-foreground mt-1">Attendance and performance points will appear here.</p>
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-2">
           {strikes.map((strike) => {
             const emp = strike.employee as unknown as { id: string; first_name: string; last_name: string; departments: { name: string } | null } | null;
-            const cat = strike.strike_categories as unknown as { name: string } | null;
+            const cat = strike.strike_categories as unknown as { name: string; code: string } | null;
             const issuer = strike.issuer as unknown as { full_name: string } | null;
-            const lvl = LEVEL_STYLES[strike.level] ?? LEVEL_STYLES[1];
 
             return (
               <Card key={strike.id} className="hover:shadow-sm transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <span
-                        className="inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-bold mt-0.5"
-                        style={{ backgroundColor: lvl.bg, color: lvl.text, border: `1px solid ${lvl.border}` }}
-                      >
-                        L{strike.level}
-                      </span>
+                      <PointsBadge points={strike.points} className="mt-0.5 shrink-0" />
                       <div className="min-w-0">
                         {emp ? (
                           <Link href={`/employees/${emp.id}/strikes`} className="font-semibold text-foreground hover:underline">
@@ -77,12 +73,15 @@ export default async function StrikesPage() {
                         ) : (
                           <span className="font-semibold text-foreground">Unknown</span>
                         )}
-                        <div className="flex flex-wrap gap-2 mt-1">
+                        <div className="flex flex-wrap items-center gap-2 mt-0.5">
                           {emp?.departments && (
                             <Badge variant="outline" className="text-[10px]">{(emp.departments as unknown as { name: string }).name}</Badge>
                           )}
                           {cat && (
                             <span className="text-xs text-muted-foreground">{cat.name}</span>
+                          )}
+                          {strike.is_weekend && (
+                            <span className="text-[10px] rounded-full px-1.5 py-0.5 font-medium" style={{ backgroundColor: "hsl(45 100% 93%)", color: "hsl(45 100% 30%)" }}>Weekend</span>
                           )}
                         </div>
                         {strike.description && (

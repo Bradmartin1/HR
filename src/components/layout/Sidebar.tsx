@@ -50,7 +50,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Attendance", href: "/attendance", icon: UserCheck, permission: "attendance.enter" },
       { label: "PTO", href: "/pto", icon: Calendar },
       { label: "Schedules", href: "/schedules", icon: Clock },
-      { label: "Strikes", href: "/strikes", icon: AlertTriangle, permission: "strikes.issue" },
+      { label: "Points", href: "/strikes", icon: AlertTriangle, permission: "strikes.issue" },
     ],
   },
   {
