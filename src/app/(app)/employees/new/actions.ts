@@ -40,17 +40,37 @@ export async function createEmployee(formData: FormData) {
       last_name: lastName,
       preferred_name: preferredName || null,
       work_email: workEmail || null,
+      work_phone: null,
+      personal_email: null,
       personal_phone: personalPhone || null,
+      date_of_birth: null,
+      ssn_last4: null,
+      gender: null,
+      ethnicity: null,
+      address_line1: null,
+      address_line2: null,
+      city: null,
+      state: null,
+      zip: null,
+      emergency_contact_name: null,
+      emergency_contact_phone: null,
+      emergency_contact_rel: null,
       hire_date: hireDate,
       employment_type: employmentType,
       status: status,
       department_id: departmentId || null,
       job_title_id: jobTitleId || null,
       location_id: locationId || null,
+      manager_id: null,
+      user_id: null,
       is_driver: isDriver,
       cdl_expiry: (isDriver && cdlExpiry) ? cdlExpiry : null,
+      termination_date: null,
+      termination_reason: null,
+      rehire_eligible: null,
+      deleted_at: null,
       created_by: session.id,
-    })
+    } as Record<string, unknown>)
     .select("id")
     .single();
 
@@ -62,10 +82,12 @@ export async function createEmployee(formData: FormData) {
       employee_id: employee.id,
       pay_type: payType,
       amount: parseFloat(payAmount),
+      currency: "USD",
       effective_date: hireDate,
-      is_current: true,
-      created_by: session.id,
-    });
+      end_date: null,
+      change_reason: "Initial hire",
+      approved_by: session.id,
+    } as Record<string, unknown>);
   }
 
   redirect(`/employees/${employee.id}/overview`);

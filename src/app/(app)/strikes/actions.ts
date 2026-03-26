@@ -53,7 +53,11 @@ export async function issuePoint(formData: FormData) {
       issued_by: session.id,
       level: null,
       voided: false,
-    })
+      approved_by: null,
+      approved_at: null,
+      voided_reason: null,
+      voided_by: null,
+    } as Record<string, unknown>)
     .select("id")
     .single();
 
@@ -68,7 +72,10 @@ export async function issuePoint(formData: FormData) {
       effective_date: incidentDate,
       details: "Immediate termination — Theft from company",
       issued_by: session.id,
-    });
+      end_date: null,
+      document_path: null,
+      employee_acknowledged_at: null,
+    } as Record<string, unknown>);
   } else {
     // Calculate new point total and check thresholds
     const { data: totalResult } = await supabase.rpc("get_employee_active_points", {
@@ -100,7 +107,10 @@ export async function issuePoint(formData: FormData) {
           effective_date: incidentDate,
           details: `Step ${crossedThreshold.step} — ${crossedThreshold.label} (${newTotal} points accumulated)`,
           issued_by: session.id,
-        });
+          end_date: null,
+          document_path: null,
+          employee_acknowledged_at: null,
+        } as Record<string, unknown>);
       }
     }
   }
