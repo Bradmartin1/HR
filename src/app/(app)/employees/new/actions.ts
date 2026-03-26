@@ -70,7 +70,8 @@ export async function createEmployee(formData: FormData) {
       rehire_eligible: null,
       deleted_at: null,
       created_by: session.id,
-    } as Record<string, unknown>)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
     .select("id")
     .single();
 
@@ -78,6 +79,7 @@ export async function createEmployee(formData: FormData) {
 
   // Create initial compensation record if pay info provided
   if (payType && payAmount && parseFloat(payAmount) > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase.from("compensation_records").insert({
       employee_id: employee.id,
       pay_type: payType,
@@ -87,7 +89,7 @@ export async function createEmployee(formData: FormData) {
       end_date: null,
       change_reason: "Initial hire",
       approved_by: session.id,
-    } as Record<string, unknown>);
+    } as any);
   }
 
   redirect(`/employees/${employee.id}/overview`);

@@ -57,7 +57,8 @@ export async function issuePoint(formData: FormData) {
       approved_at: null,
       voided_reason: null,
       voided_by: null,
-    } as Record<string, unknown>)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
     .select("id")
     .single();
 
@@ -75,7 +76,8 @@ export async function issuePoint(formData: FormData) {
       end_date: null,
       document_path: null,
       employee_acknowledged_at: null,
-    } as Record<string, unknown>);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
   } else {
     // Calculate new point total and check thresholds
     const { data: totalResult } = await supabase.rpc("get_employee_active_points", {
@@ -110,7 +112,8 @@ export async function issuePoint(formData: FormData) {
           end_date: null,
           document_path: null,
           employee_acknowledged_at: null,
-        } as Record<string, unknown>);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
       }
     }
   }
