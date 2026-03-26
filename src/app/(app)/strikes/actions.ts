@@ -80,7 +80,8 @@ export async function issuePoint(formData: FormData) {
     } as any);
   } else {
     // Calculate new point total and check thresholds
-    const { data: totalResult } = await supabase.rpc("get_employee_active_points", {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: totalResult } = await (supabase.rpc as any)("get_employee_active_points", {
       p_employee_id: employeeId,
     });
 

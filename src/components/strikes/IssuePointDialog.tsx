@@ -66,8 +66,8 @@ export function IssuePointDialog({ employeeId, employeeName, currentPoints, trig
     if (selectedEmployeeId && open) {
       setLoadingPoints(true);
       const supabase = createClient();
-      supabase
-        .rpc("get_employee_active_points", { p_employee_id: selectedEmployeeId })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.rpc as any)("get_employee_active_points", { p_employee_id: selectedEmployeeId })
         .then(({ data }) => {
           setEmpPoints(typeof data === "number" ? data : 0);
           setLoadingPoints(false);
