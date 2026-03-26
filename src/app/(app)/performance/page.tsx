@@ -3,77 +3,97 @@ import { getSession } from "@/lib/auth/getSession";
 import { createClient } from "@/lib/supabase/server";
 import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { TrendingUp, Calendar, Users } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
-import Link from "next/link";
 
-const STATUS_COLORS: Record<string, string> = {
-  draft: "bg-gray-100 text-gray-700",
-  active: "bg-green-100 text-green-800",
-  completed: "bg-blue-100 text-blue-800",
-  archived: "bg-gray-100 text-gray-500",
+const STATUS_STYLES: Record<string, { label: string; bg: string; text: string }> = {
+  draft:     { label: "Draft",     bg: "hsl(0 0% 94%)",          text: "hsl(0 0% 40%)" },
+  active:    { label: "Active",    bg: "hsl(140 60% 92%)",       text: "hsl(140 60% 28%)" },
+  completed: { label: "Completed", bg: "hsl(188 100% 26% / 0.1)", text: "hsl(188 100% 26%)" },
+  archived:  { label: "Archived",  bg: "hsl(0 0% 94%)",          text: "hsl(0 0% 50%)" },
 };
 
 export default async function PerformancePage() {
   const session = await getSession();
   if (!session) redirect("/login");
-
-  if (!hasPermission(session.role, "performance.manage_cycles") && !hasPermission(session.role, "performance.conduct_reviews")) {
-    redirect("/dashboard");
-  }
+  if (!hasPermission(session.role, "performance.manage_cycles")) redirect("/dashboard");
 
   const supabase = await createClient();
 
   const { data: cycles } = await supabase
     .from("performance_review_cycles")
-    .select(`id, name, cycle_type, start_date, end_date, status, departments(name)`)
-    .order("start_date", { ascending: false });
-
-  const cycleIds = (cycles ?? []).map((c) => c.id);
-  const { data: reviews } = cycleIds.length > 0
-    ? await supabase
-        .from("performance_reviews")
-        .select("cycle_id, status")
-        .in("cycle_id", cycleIds)
-    : { data: [] };
-
-  const reviewCount: Record<string, number> = {};
-  for (const r of reviews ?? []) {
-    reviewCount[r.cycle_id] = (reviewCount[r.cycle_id] ?? 0) + 1;
-  }
+    .select(`
+      id, name, cycle_type, start_date, end_date, status,
+      departments(name),
+      performance_reviews(id, status)
+    `)
+    .order("created_at", { ascending: false });
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Performance" description="Review cycles and evaluations" />
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Review Cycles</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {(cycles ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No review cycles created yet.</p>
-          ) : (
-            <div className="divide-y">
-              {(cycles ?? []).map((cycle) => (
-                <div key={cycle.id} className="flex items-center justify-between py-3">
-                  <div>
-                    <p className="text-sm font-medium">{cycle.name}</p>
-                    <p className="text-xs text-muted-foreground capitalize">
-                      {cycle.cycle_type.replace(/_/g, " ")} · {formatDate(cycle.start_date)} – {formatDate(cycle.end_date)}
-                      {(cycle.departments as { name: string } | null)?.name && ` · ${(cycle.departments as { name: string }).name}`}
-                    </p>
+      <PageHeader
+        title="Performance Reviews"
+        description="Manage review cycles and track employee performance"
+      />
+
+      {!cycles || cycles.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <TrendingUp className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <h3 className="text-base font-semibold">No review cycles yet</h3>
+            <p className="text-sm text-muted-foreground mt-1">Create a review cycle to start performance reviews.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {cycles.map((cycle) => {
+            const reviews = Array.isArray(cycle.performance_reviews) ? cycle.performance_reviews : [];
+            const pending = reviews.filter((r: { status: string }) => r.status === "pending").length;
+            const completed = reviews.filter((r: { status: string }) => ["submitted","acknowledged","finalized"].includes(r.status)).length;
+            const st = STATUS_STYLES[cycle.status] ?? STATUS_STYLES.draft;
+            const dept = cycle.departments as unknown as { name: string } | null;
+
+            return (
+              <Card key={cycle.id} className="hover:shadow-sm transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-foreground">{cycle.name}</h3>
+                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium" style={{ backgroundColor: st.bg, color: st.text }}>
+                          {st.label}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>{formatDate(cycle.start_date)} → {formatDate(cycle.end_date)}</span>
+                        </div>
+                        {dept && (
+                          <div className="flex items-center gap-1.5">
+                            <Users className="h-3.5 w-3.5" />
+                            <span>{dept.name}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-4 text-xs">
+                        <span className="text-muted-foreground">{reviews.length} total</span>
+                        <span style={{ color: "hsl(45 100% 35%)" }}>{pending} pending</span>
+                        <span style={{ color: "hsl(140 60% 35%)" }}>{completed} completed</span>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="shrink-0 capitalize text-xs">
+                      {cycle.cycle_type.replace(/_/g, " ")}
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground">{reviewCount[cycle.id] ?? 0} reviews</span>
-                    <Badge className={STATUS_COLORS[cycle.status] ?? ""}>{cycle.status}</Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

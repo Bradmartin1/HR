@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, Users, ClipboardList, Building2, Star, AlertTriangle,
-  Calendar, Clock, FileBarChart, Upload, Bell, Settings, Shield,
-  TrendingUp, Award, ClipboardCheck, UserCheck,
+  LayoutDashboard, Users, ClipboardList, Building2,
+  AlertTriangle, Calendar, Clock, FileBarChart, Upload,
+  Bell, Settings, TrendingUp, Award, ClipboardCheck,
+  UserCheck, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -20,80 +21,139 @@ interface NavItem {
   activePattern?: RegExp;
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Employees", href: "/employees", icon: Users, permission: "employees.list" },
-  { label: "Onboarding", href: "/onboarding", icon: ClipboardCheck, permission: "onboarding.manage_templates" },
-  { label: "My Tasks", href: "/onboarding/my-tasks", icon: ClipboardList },
-  { label: "Departments", href: "/departments", icon: Building2, permission: "departments.manage" },
-  { label: "Performance", href: "/performance", icon: TrendingUp, permission: "performance.manage_cycles" },
-  { label: "Recognition", href: "/recognition", icon: Award },
-  { label: "Strikes", href: "/strikes", icon: AlertTriangle, permission: "strikes.issue" },
-  { label: "PTO", href: "/pto", icon: Calendar },
-  { label: "Schedules", href: "/schedules", icon: Clock },
-  { label: "Attendance", href: "/attendance", icon: UserCheck, permission: "attendance.enter" },
-  { label: "Surveys", href: "/surveys", icon: ClipboardList, permission: "surveys.manage" },
-  { label: "Reports", href: "/reports", permission: "reports.full", icon: FileBarChart },
-  { label: "Bulk Upload", href: "/bulk-upload", icon: Upload, permission: "bulk_upload.import" },
-  { label: "Notifications", href: "/notifications", icon: Bell },
-  { label: "Settings", href: "/settings", icon: Settings },
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Overview",
+    items: [
+      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { label: "Notifications", href: "/notifications", icon: Bell },
+    ],
+  },
+  {
+    label: "People",
+    items: [
+      { label: "Employees", href: "/employees", icon: Users, permission: "employees.list" },
+      { label: "Departments", href: "/departments", icon: Building2, permission: "departments.manage" },
+      { label: "Onboarding", href: "/onboarding", icon: ClipboardCheck, permission: "onboarding.manage_templates" },
+      { label: "My Tasks", href: "/onboarding/my-tasks", icon: ClipboardList },
+      { label: "Recognition", href: "/recognition", icon: Award },
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      { label: "Attendance", href: "/attendance", icon: UserCheck, permission: "attendance.enter" },
+      { label: "PTO", href: "/pto", icon: Calendar },
+      { label: "Schedules", href: "/schedules", icon: Clock },
+      { label: "Strikes", href: "/strikes", icon: AlertTriangle, permission: "strikes.issue" },
+    ],
+  },
+  {
+    label: "Performance",
+    items: [
+      { label: "Reviews", href: "/performance", icon: TrendingUp, permission: "performance.manage_cycles" },
+      { label: "Surveys", href: "/surveys", icon: ClipboardList, permission: "surveys.manage" },
+    ],
+  },
+  {
+    label: "Admin",
+    items: [
+      { label: "Reports", href: "/reports", icon: FileBarChart, permission: "reports.full" },
+      { label: "Bulk Upload", href: "/bulk-upload", icon: Upload, permission: "bulk_upload.import" },
+      { label: "Settings", href: "/settings", icon: Settings },
+    ],
+  },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { user } = useCurrentUser();
 
-  const visibleItems = NAV_ITEMS.filter((item) => {
-    if (!user) return false;
-    if (!item.permission) return true;
-    return hasPermission(user.role, item.permission);
-  });
+  const isActive = (item: NavItem) => {
+    if (item.activePattern) return item.activePattern.test(pathname);
+    if (item.href === "/dashboard") return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+    return pathname === item.href || pathname.startsWith(item.href + "/");
+  };
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-sidebar border-r border-sidebar-border">
-      {/* Logo */}
-      <div className="flex h-14 items-center px-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-sidebar-primary" />
-          <span className="font-semibold text-sidebar-foreground">Rushtown HR</span>
+    <aside className="flex h-full w-60 flex-col" style={{ backgroundColor: "hsl(343 23% 6%)" }}>
+      <div className="flex h-14 items-center px-5 border-b" style={{ borderColor: "hsl(343 15% 14%)" }}>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-7 w-7 items-center justify-center rounded" style={{ backgroundColor: "hsl(177 61% 46%)" }}>
+            <span className="text-xs font-bold text-white">RP</span>
+          </div>
+          <div>
+            <div className="text-sm font-semibold leading-tight" style={{ color: "hsl(0 0% 95%)" }}>Rushtown</div>
+            <div className="text-[10px] uppercase tracking-wider" style={{ color: "hsl(177 61% 46%)" }}>HR Platform</div>
+          </div>
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2">
-        <ul className="space-y-0.5">
-          {visibleItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = item.activePattern
-              ? item.activePattern.test(pathname)
-              : pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-4">
+        {NAV_GROUPS.map((group) => {
+          const visibleItems = group.items.filter((item) => {
+            if (!user) return false;
+            if (!item.permission) return true;
+            return hasPermission(user.role, item.permission);
+          });
+          if (visibleItems.length === 0) return null;
 
-            return (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                    isActive
-                      ? "bg-sidebar-accent text-sidebar-foreground font-medium"
-                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+          return (
+            <div key={group.label}>
+              <div className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-widest" style={{ color: "hsl(77 3% 45%)" }}>
+                {group.label}
+              </div>
+              <ul className="space-y-0.5">
+                {visibleItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item);
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="group flex items-center gap-3 rounded-md px-2.5 py-2 text-sm transition-all duration-150"
+                        style={active ? {
+                          backgroundColor: "hsl(177 61% 46% / 0.15)",
+                          color: "hsl(177 61% 66%)",
+                          borderLeft: "2px solid hsl(177 61% 46%)",
+                          paddingLeft: "calc(0.625rem - 2px)",
+                          fontWeight: "500",
+                        } : {
+                          color: "hsl(0 0% 65%)",
+                        }}
+                      >
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span>{item.label}</span>
+                        {active && <ChevronRight className="ml-auto h-3 w-3 opacity-50" />}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
       </nav>
 
-      {/* User info */}
       {user && (
-        <div className="border-t border-sidebar-border p-4">
-          <div className="text-xs text-sidebar-foreground/60">
-            <div className="font-medium text-sidebar-foreground truncate">{user.fullName ?? user.email}</div>
-            <div className="capitalize">{user.role.replace("_", " ")}</div>
+        <div className="border-t p-3" style={{ borderColor: "hsl(343 15% 14%)" }}>
+          <div className="flex items-center gap-2.5 rounded-md px-2 py-2" style={{ backgroundColor: "hsl(343 20% 12%)" }}>
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white" style={{ backgroundColor: "hsl(188 100% 26%)" }}>
+              {(user.fullName ?? user.email ?? "?").slice(0, 2).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-xs font-medium" style={{ color: "hsl(0 0% 92%)" }}>
+                {user.fullName ?? user.email}
+              </div>
+              <div className="text-[10px] capitalize" style={{ color: "hsl(77 3% 55%)" }}>
+                {user.role.replace(/_/g, " ")}
+              </div>
+            </div>
           </div>
         </div>
       )}
