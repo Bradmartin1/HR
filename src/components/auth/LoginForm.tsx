@@ -79,7 +79,7 @@ export function LoginForm() {
           )}
         </CardContent>
         <CardFooter className="flex flex-col gap-3 pt-0">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full" disabled={isSubmitting} style={{ backgroundColor: "#007384" }}>
             {isSubmitting ? <LoadingSpinner size="sm" /> : "Sign In"}
           </Button>
           <Link href="/forgot-password" className="text-sm text-muted-foreground hover:text-primary text-center">

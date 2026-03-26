@@ -53,7 +53,7 @@ export function Topbar() {
   return (
     <header className="flex h-14 items-center justify-between border-b bg-white px-6 shadow-sm">
       <div>
-        <h1 className="text-base font-semibold text-foreground">{getPageTitle(pathname)}</h1>
+        <h1 className="text-lg tracking-wide text-foreground" style={{ fontFamily: "var(--font-heading)" }}>{getPageTitle(pathname).toUpperCase()}</h1>
         <p className="text-xs text-muted-foreground hidden sm:block">Rushtown Poultry · Internal HR Platform</p>
       </div>
 

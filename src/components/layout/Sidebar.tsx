@@ -84,12 +84,12 @@ export function Sidebar() {
     <aside className="flex h-full w-60 flex-col" style={{ backgroundColor: "hsl(343 23% 6%)" }}>
       <div className="flex h-14 items-center px-5 border-b" style={{ borderColor: "hsl(343 15% 14%)" }}>
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded" style={{ backgroundColor: "hsl(177 61% 46%)" }}>
-            <span className="text-xs font-bold text-white">RP</span>
+          <div className="flex h-7 w-7 items-center justify-center rounded" style={{ backgroundColor: "#2DBDB6" }}>
+            <span className="text-xs font-bold text-white" style={{ fontFamily: "var(--font-heading)" }}>RP</span>
           </div>
           <div>
-            <div className="text-sm font-semibold leading-tight" style={{ color: "hsl(0 0% 95%)" }}>Rushtown</div>
-            <div className="text-[10px] uppercase tracking-wider" style={{ color: "hsl(177 61% 46%)" }}>HR Platform</div>
+            <div className="text-sm leading-tight tracking-wide" style={{ color: "#FFEB95", fontFamily: "var(--font-heading)", letterSpacing: "0.08em" }}>RUSHTOWN</div>
+            <div className="text-[10px] uppercase tracking-wider" style={{ color: "#2DBDB6" }}>HR Platform</div>
           </div>
         </div>
       </div>
