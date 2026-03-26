@@ -1,59 +1,104 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { HeadcountWidget } from "./widgets/HeadcountWidget";
-
-interface DeptCount {
-  name: string;
-  count: number;
-}
+import { Progress } from "@/components/ui/progress";
+import { Users, Building2, TrendingUp, AlertTriangle, Calendar } from "lucide-react";
 
 export function ExecutiveDashboard() {
-  const [deptData, setDeptData] = useState<DeptCount[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [totalEmp, setTotalEmp] = useState(0);
+  const [deptBreakdown, setDeptBreakdown] = useState<{ name: string; count: number }[]>([]);
+  const [activeReviews, setActiveReviews] = useState(0);
+  const [openPto, setOpenPto] = useState(0);
 
   useEffect(() => {
-    const load = async () => {
+    async function load() {
       const supabase = createClient();
-      const { data: depts } = await supabase.from("departments").select("id, name");
-      if (!depts) return;
+      const [empRes, deptRes, reviewRes, ptoRes] = await Promise.all([
+        supabase.from("employees").select("id, status").is("deleted_at", null).eq("status", "active"),
+        supabase.from("departments").select("id, name, employees(id)"),
+        supabase.from("performance_reviews").select("id").eq("status", "pending"),
+        supabase.from("pto_requests").select("id").eq("status", "pending"),
+      ]);
 
-      const counts = await Promise.all(
-        depts.map(async (dept) => {
-          const { count } = await supabase
-            .from("employees")
-            .select("id", { count: "exact" })
-            .eq("department_id", dept.id)
-            .eq("status", "active");
-          return { name: dept.name, count: count ?? 0 };
-        })
+      setTotalEmp(empRes.data?.length ?? 0);
+      setDeptBreakdown(
+        (deptRes.data ?? [])
+          .map(d => ({ name: d.name, count: Array.isArray(d.employees) ? d.employees.length : 0 }))
+          .filter(d => d.count > 0)
+          .sort((a, b) => b.count - a.count)
       );
-      setDeptData(counts);
-    };
+      setActiveReviews(reviewRes.data?.length ?? 0);
+      setOpenPto(ptoRes.data?.length ?? 0);
+      setLoading(false);
+    }
     load();
   }, []);
 
+  const maxDept = Math.max(...deptBreakdown.map(d => d.count), 1);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}><CardContent className="p-5 h-28 animate-pulse bg-muted/30" /></Card>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
-        <HeadcountWidget />
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <Card className="stat-card-teal">
+          <CardContent className="p-5">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Workforce</p>
+            <p className="mt-1.5 text-3xl font-bold text-foreground">{totalEmp}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">active employees</p>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-5">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Departments</p>
+            <p className="mt-1.5 text-3xl font-bold text-foreground">{deptBreakdown.length}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">active departments</p>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-5">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Open PTO</p>
+            <p className="mt-1.5 text-3xl font-bold text-foreground">{openPto}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">pending requests</p>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-orange">
+          <CardContent className="p-5">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Reviews</p>
+            <p className="mt-1.5 text-3xl font-bold text-foreground">{activeReviews}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">pending submission</p>
+          </CardContent>
+        </Card>
       </div>
+
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Headcount by Department</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>Workforce Distribution</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </div>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={deptData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <CardContent className="space-y-3">
+          {deptBreakdown.map(d => (
+            <div key={d.name} className="space-y-1.5">
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-foreground">{d.name}</span>
+                <span className="text-muted-foreground">{d.count} employees</span>
+              </div>
+              <Progress value={(d.count / maxDept) * 100} className="h-2" />
+            </div>
+          ))}
         </CardContent>
       </Card>
     </div>
