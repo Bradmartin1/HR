@@ -735,13 +735,16 @@ export interface Database {
           category_id: string;
           incident_date: string;
           description: string;
-          level: number;
+          level: number | null;
           issued_by: string;
           approved_by: string | null;
           approved_at: string | null;
           voided: boolean;
           voided_reason: string | null;
           voided_by: string | null;
+          points: number | null;
+          is_weekend: boolean;
+          notes: string | null;
           created_at: string;
         };
         Insert: Omit<Database["public"]["Tables"]["strike_events"]["Row"], "id" | "created_at"> & { id?: string; created_at?: string };
