@@ -68,7 +68,7 @@ export function IssuePointDialog({ employeeId, employeeName, currentPoints, trig
       const supabase = createClient();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (supabase.rpc as any)("get_employee_active_points", { p_employee_id: selectedEmployeeId })
-        .then(({ data }) => {
+        .then(({ data }: { data: number | null }) => {
           setEmpPoints(typeof data === "number" ? data : 0);
           setLoadingPoints(false);
         });
