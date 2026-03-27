@@ -44,7 +44,11 @@ export function AddEmployeeForm({ departments, jobTitles, locations }: Props) {
     startTransition(async () => {
       try {
         await createEmployee(formData);
-      } catch (err) {
+      } catch (err: unknown) {
+        // Next.js redirect() throws a special error — don't treat it as a failure
+        if (err && typeof err === "object" && "digest" in err && typeof (err as { digest: unknown }).digest === "string" && (err as { digest: string }).digest.startsWith("NEXT_REDIRECT")) {
+          throw err;
+        }
         setError(err instanceof Error ? err.message : "Failed to create employee");
       }
     });
@@ -224,7 +228,7 @@ export function AddEmployeeForm({ departments, jobTitles, locations }: Props) {
             Cancel
           </Button>
         </Link>
-        <Button type="submit" disabled={isPending} className="gap-2" style={{ backgroundColor: "hsl(188 100% 26%)" }}>
+        <Button type="submit" disabled={isPending} className="gap-2">
           {isPending ? (
             <><Loader2 className="h-4 w-4 animate-spin" /> Creating...</>
           ) : (
