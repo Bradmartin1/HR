@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSession } from "@/lib/auth/getSession";
 import { createClient } from "@/lib/supabase/server";
 import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Users, MapPin, User } from "lucide-react";
+import { Building2, Users, MapPin, User, ChevronRight } from "lucide-react";
 
 export default async function DepartmentsPage() {
   const session = await getSession();
@@ -51,42 +52,49 @@ export default async function DepartmentsPage() {
             const mgrUser = primaryMgr ? (primaryMgr as unknown as { users: { full_name: string } }).users : null;
 
             return (
-              <Card key={dept.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-base">{dept.name}</CardTitle>
-                      <Badge variant="outline" className="mt-1 text-[10px] font-mono">{dept.code}</Badge>
+              <Link key={dept.id} href={`/departments/${dept.id}`}>
+                <Card className="hover:shadow-md transition-all duration-150 cursor-pointer group h-full">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-base group-hover:text-primary transition-colors">{dept.name}</CardTitle>
+                        <Badge variant="outline" className="mt-1 text-[10px] font-mono">{dept.code}</Badge>
+                      </div>
+                      <div className="rounded-lg p-2 bg-primary/10 group-hover:bg-primary/15 transition-colors">
+                        <Building2 className="h-5 w-5 text-primary" />
+                      </div>
                     </div>
-                    <div className="rounded-lg p-2" style={{ backgroundColor: "hsl(188 100% 26% / 0.08)" }}>
-                      <Building2 className="h-5 w-5" style={{ color: "hsl(188 100% 26%)" }} />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-2.5">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4 shrink-0" />
-                    <span><span className="font-semibold text-foreground">{activeCount}</span> active · {totalCount} total</span>
-                  </div>
-                  {location && (
+                  </CardHeader>
+                  <CardContent className="space-y-2.5">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4 shrink-0" />
-                      <span>{location.name}</span>
+                      <Users className="h-4 w-4 shrink-0" />
+                      <span><span className="font-semibold text-foreground">{activeCount}</span> active · {totalCount} total</span>
                     </div>
-                  )}
-                  {mgrUser && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <User className="h-4 w-4 shrink-0" />
-                      <span>{mgrUser.full_name}</span>
+                    {location && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4 shrink-0" />
+                        <span>{location.name}</span>
+                      </div>
+                    )}
+                    {mgrUser && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <User className="h-4 w-4 shrink-0" />
+                        <span>{mgrUser.full_name}</span>
+                      </div>
+                    )}
+                    <div className="pt-2 border-t flex items-center justify-between">
+                      {dept.default_shift_hours ? (
+                        <span className="text-xs text-muted-foreground">Default shift: {dept.default_shift_hours}h</span>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="text-xs text-primary flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        View details <ChevronRight className="h-3 w-3" />
+                      </span>
                     </div>
-                  )}
-                  {dept.default_shift_hours && (
-                    <div className="pt-2 border-t text-xs text-muted-foreground">
-                      Default shift: {dept.default_shift_hours}h
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             );
           })}
         </div>
