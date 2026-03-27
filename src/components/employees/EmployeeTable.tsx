@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { type ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/shared/DataTable";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { DepartmentBadge } from "@/components/shared/DepartmentBadge";
@@ -24,11 +23,11 @@ interface EmployeeRow {
   locations?: { id: string; name: string } | null;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  active: "success",
-  inactive: "secondary",
-  terminated: "destructive",
-  on_leave: "warning",
+const STATUS_CLASSES: Record<string, string> = {
+  active: "status-active",
+  inactive: "status-inactive",
+  terminated: "status-terminated",
+  on_leave: "status-on-leave",
 };
 
 export function EmployeeTable({ data }: { data: EmployeeRow[] }) {
@@ -39,7 +38,7 @@ export function EmployeeTable({ data }: { data: EmployeeRow[] }) {
       accessorKey: "employee_number",
       header: "ID",
       cell: ({ row }) => (
-        <span className="font-mono text-xs text-muted-foreground">{row.getValue("employee_number")}</span>
+        <span className="font-mono text-[11px] text-muted-foreground">{row.getValue("employee_number")}</span>
       ),
     },
     {
@@ -52,9 +51,9 @@ export function EmployeeTable({ data }: { data: EmployeeRow[] }) {
       accessorFn: (row) => `${row.last_name}, ${row.first_name}`,
       cell: ({ row }) => (
         <div>
-          <div className="font-medium">{row.original.first_name} {row.original.last_name}</div>
+          <div className="font-medium text-foreground">{row.original.first_name} {row.original.last_name}</div>
           {row.original.work_email && (
-            <div className="text-xs text-muted-foreground">{row.original.work_email}</div>
+            <div className="text-[11px] text-muted-foreground">{row.original.work_email}</div>
           )}
         </div>
       ),
@@ -64,29 +63,30 @@ export function EmployeeTable({ data }: { data: EmployeeRow[] }) {
       header: "Department",
       cell: ({ row }) => row.original.departments ? (
         <DepartmentBadge department={row.original.departments.name} />
-      ) : "—",
+      ) : <span className="text-muted-foreground">—</span>,
     },
     {
       accessorKey: "job_titles.title",
       header: "Title",
-      cell: ({ row }) => row.original.job_titles?.title ?? "—",
+      cell: ({ row }) => <span className="text-sm">{row.original.job_titles?.title ?? "—"}</span>,
     },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
+        const cls = STATUS_CLASSES[status] ?? "status-inactive";
         return (
-          <Badge variant={(STATUS_COLORS[status] ?? "secondary") as "success" | "secondary" | "destructive" | "warning"}>
+          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold capitalize ${cls}`}>
             {status.replace("_", " ")}
-          </Badge>
+          </span>
         );
       },
     },
     {
       accessorKey: "hire_date",
       header: "Hire Date",
-      cell: ({ row }) => formatDate(row.getValue("hire_date")),
+      cell: ({ row }) => <span className="text-sm text-muted-foreground">{formatDate(row.getValue("hire_date"))}</span>,
     },
     {
       id: "actions",

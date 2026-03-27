@@ -103,13 +103,13 @@ export function DocumentsTab({ documents, employeeId, role }: DocumentsTabProps)
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Expiry</TableHead>
-                  <TableHead>Flags</TableHead>
-                  <TableHead>Uploaded</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Name</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Type</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Expiry</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Flags</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Uploaded</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -129,18 +129,18 @@ export function DocumentsTab({ documents, employeeId, role }: DocumentsTabProps)
                           <span
                             className={
                               isExpired(doc.expiry_date)
-                                ? "text-red-600 font-medium"
+                                ? "text-[#F15A22] font-medium"
                                 : isExpiringSoon(doc.expiry_date)
-                                ? "text-amber-600 font-medium"
+                                ? "text-[#FFC20E] font-medium"
                                 : ""
                             }
                           >
                             {formatDate(doc.expiry_date)}
                             {isExpired(doc.expiry_date) && (
-                              <Badge className="ml-2 bg-red-100 text-red-800 text-xs">Expired</Badge>
+                              <Badge className="ml-2 bg-[#fde8e1] text-[#F15A22] text-xs">Expired</Badge>
                             )}
                             {isExpiringSoon(doc.expiry_date) && !isExpired(doc.expiry_date) && (
-                              <Badge className="ml-2 bg-amber-100 text-amber-800 text-xs">Expiring</Badge>
+                              <Badge className="ml-2 bg-[#fff4cc] text-[#7a5e00] text-xs">Expiring</Badge>
                             )}
                           </span>
                         ) : (
@@ -150,12 +150,12 @@ export function DocumentsTab({ documents, employeeId, role }: DocumentsTabProps)
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
                           {doc.is_sensitive && (
-                            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100 text-xs">
+                            <Badge className="bg-[#fde8e1] text-[#a33a14] hover:bg-[#fde8e1] text-xs">
                               Sensitive
                             </Badge>
                           )}
                           {requiresAck && (
-                            <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 text-xs">
+                            <Badge className="bg-[#fff4cc] text-[#7a5e00] hover:bg-[#fff4cc] text-xs">
                               Needs Acknowledgement
                             </Badge>
                           )}

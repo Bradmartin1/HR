@@ -38,7 +38,7 @@ export function NotesTab({ notes }: NotesTabProps) {
                         {note.author?.full_name ?? "Unknown"}
                       </span>
                       {note.is_private && (
-                        <Badge className="bg-red-100 text-red-800 hover:bg-red-100 text-xs">
+                        <Badge className="bg-[#fde8e1] text-[#a33a14] hover:bg-[#fde8e1] text-xs">
                           Private
                         </Badge>
                       )}

@@ -17,17 +17,15 @@ export const ROLE_LABELS: Record<Role, string> = {
 };
 
 export const ROLE_COLORS: Record<Role, string> = {
-  owner: "bg-purple-100 text-purple-800",
-  hr_manager: "bg-blue-100 text-blue-800",
-  department_manager: "bg-green-100 text-green-800",
-  employee: "bg-gray-100 text-gray-800",
-  executive: "bg-amber-100 text-amber-800",
+  owner: "bg-[#e6f7f6] text-[#005f6d]",
+  hr_manager: "bg-[#e0f4f3] text-[#007384]",
+  department_manager: "bg-[#fff4cc] text-[#7a5e00]",
+  employee: "bg-[#f0efee] text-[#5c5b59]",
+  executive: "bg-[#fde8e1] text-[#a33a14]",
 };
 
-// Roles that can manage HR data
 export const HR_ROLES: Role[] = [ROLES.OWNER, ROLES.HR_MANAGER];
 
-// Roles that can view management-level data
 export const MANAGER_ROLES: Role[] = [
   ROLES.OWNER,
   ROLES.HR_MANAGER,

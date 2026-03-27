@@ -32,11 +32,11 @@ interface OnboardingTabProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  completed: "bg-green-100 text-green-800",
-  in_progress: "bg-blue-100 text-blue-800",
-  pending: "bg-gray-100 text-gray-800",
-  skipped: "bg-yellow-100 text-yellow-800",
-  overdue: "bg-red-100 text-red-800",
+  completed: "bg-[#e6f7f6] text-[#005f6d]",
+  in_progress: "bg-[#e0f4f3] text-[#007384]",
+  pending: "bg-[#f0efee] text-[#5c5b59]",
+  skipped: "bg-[#fff4cc] text-[#7a5e00]",
+  overdue: "bg-[#fde8e1] text-[#F15A22]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -169,15 +169,15 @@ export function OnboardingTab({ progress, employeeId, role }: OnboardingTabProps
                           {task?.title ?? "Unknown Task"}
                         </p>
                         {task?.is_required && (
-                          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 text-xs">
+                          <Badge className="bg-[#e0f4f3] text-[#007384] hover:bg-[#e0f4f3] text-xs">
                             Required
                           </Badge>
                         )}
                         <span
                           className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${
                             isOverdue
-                              ? "bg-red-100 text-red-800"
-                              : STATUS_COLORS[item.status] ?? "bg-gray-100 text-gray-800"
+                              ? "bg-[#fde8e1] text-[#F15A22]"
+                              : STATUS_COLORS[item.status] ?? "bg-[#f0efee] text-[#5c5b59]"
                           }`}
                         >
                           {isOverdue ? "Overdue" : (STATUS_LABELS[item.status] ?? item.status)}

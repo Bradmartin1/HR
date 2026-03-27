@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -43,6 +42,14 @@ const PAY_TYPE_LABELS: Record<string, string> = {
   contract: "Contract",
 };
 
+const PAY_TYPE_COLORS: Record<string, string> = {
+  hourly: "bg-[#e6f7f6] text-[#005f6d]",
+  salary: "bg-[#e0f4f3] text-[#007384]",
+  salary_exempt: "bg-[#e0f4f3] text-[#007384]",
+  salary_non_exempt: "bg-[#e0f4f3] text-[#007384]",
+  commission: "bg-[#fff4cc] text-[#7a5e00]",
+  contract: "bg-[#f0efee] text-[#5c5b59]",
+};
 
 export function CompensationTab({
   compensationRecords,
@@ -60,31 +67,37 @@ export function CompensationTab({
           <CardContent>
             <dl className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <dt className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
                   Pay Type
                 </dt>
-                <dd className="mt-1 text-sm">
-                  {PAY_TYPE_LABELS[currentRecord.pay_type] ?? currentRecord.pay_type.replace(/_/g, " ")}
+                <dd className="mt-1">
+                  <span
+                    className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-[11px] font-semibold ${
+                      PAY_TYPE_COLORS[currentRecord.pay_type] ?? "bg-[#f0efee] text-[#5c5b59]"
+                    }`}
+                  >
+                    {PAY_TYPE_LABELS[currentRecord.pay_type] ?? currentRecord.pay_type.replace(/_/g, " ")}
+                  </span>
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <dt className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
                   Amount
                 </dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {formatCurrency(currentRecord.amount)}
                   {currentRecord.pay_type === "hourly" && (
-                    <span className="text-muted-foreground font-normal text-xs ml-1">/ hr</span>
+                    <span className="text-muted-foreground font-normal text-[11px] ml-1">/ hr</span>
                   )}
                   {(currentRecord.pay_type === "salary" ||
                     currentRecord.pay_type === "salary_exempt" ||
                     currentRecord.pay_type === "salary_non_exempt") && (
-                    <span className="text-muted-foreground font-normal text-xs ml-1">/ yr</span>
+                    <span className="text-muted-foreground font-normal text-[11px] ml-1">/ yr</span>
                   )}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <dt className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
                   Effective Date
                 </dt>
                 <dd className="mt-1 text-sm">{formatDate(currentRecord.effective_date)}</dd>
@@ -104,19 +117,25 @@ export function CompensationTab({
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Pay Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Effective Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Change Reason</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Pay Type</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Amount</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Effective Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">End Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Change Reason</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {compensationRecords.map((record) => (
                   <TableRow key={record.id}>
-                    <TableCell className="text-sm">
-                      {PAY_TYPE_LABELS[record.pay_type] ?? record.pay_type.replace(/_/g, " ")}
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold ${
+                          PAY_TYPE_COLORS[record.pay_type] ?? "bg-[#f0efee] text-[#5c5b59]"
+                        }`}
+                      >
+                        {PAY_TYPE_LABELS[record.pay_type] ?? record.pay_type.replace(/_/g, " ")}
+                      </span>
                     </TableCell>
                     <TableCell className="text-sm font-medium">
                       {formatCurrency(record.amount)}
@@ -126,7 +145,9 @@ export function CompensationTab({
                       {record.end_date ? (
                         formatDate(record.end_date)
                       ) : (
-                        <span className="text-muted-foreground">Current</span>
+                        <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold status-active">
+                          Current
+                        </span>
                       )}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
@@ -150,13 +171,13 @@ export function CompensationTab({
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Benefit Type</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead>Enrollment Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Employee Cost</TableHead>
-                  <TableHead>Employer Cost</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Benefit Type</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Plan</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Enrollment Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">End Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Employee Cost</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Employer Cost</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -173,7 +194,9 @@ export function CompensationTab({
                       {record.end_date ? (
                         formatDate(record.end_date)
                       ) : (
-                        <span className="text-muted-foreground">Current</span>
+                        <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold status-active">
+                          Current
+                        </span>
                       )}
                     </TableCell>
                     <TableCell className="text-sm">{formatCurrency(record.employee_contribution)}</TableCell>

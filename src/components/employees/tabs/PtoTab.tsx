@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -36,12 +35,12 @@ interface PtoTabProps {
   requests: PtoRequest[];
 }
 
-const REQUEST_STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  approved: "bg-green-100 text-green-800",
-  denied: "bg-red-100 text-red-800",
-  cancelled: "bg-gray-100 text-gray-800",
-  taken: "bg-blue-100 text-blue-800",
+const REQUEST_STATUS_CLASSES: Record<string, string> = {
+  pending: "status-pending",
+  approved: "status-approved",
+  denied: "status-denied",
+  cancelled: "status-inactive",
+  taken: "bg-[#e0f4f3] text-[#007384]",
 };
 
 const PTO_TYPE_LABELS: Record<string, string> = {
@@ -82,20 +81,20 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
                       <p className="text-sm font-medium">
                         {PTO_TYPE_LABELS[balance.pto_type] ?? balance.pto_type.replace(/_/g, " ")}
                       </p>
-                      <span className="text-xs text-muted-foreground">{balance.year}</span>
+                      <span className="text-[11px] text-muted-foreground">{balance.year}</span>
                     </div>
                     <dl className="grid grid-cols-3 gap-2 text-center">
                       <div>
-                        <dt className="text-xs text-muted-foreground">Balance</dt>
-                        <dd className="text-lg font-bold">{remaining.toFixed(1)}</dd>
+                        <dt className="text-[11px] text-muted-foreground">Balance</dt>
+                        <dd className="text-lg font-bold text-[#007384]">{remaining.toFixed(1)}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs text-muted-foreground">Used</dt>
-                        <dd className="text-lg font-bold text-orange-600">{used.toFixed(1)}</dd>
+                        <dt className="text-[11px] text-muted-foreground">Used</dt>
+                        <dd className="text-lg font-bold text-[#F15A22]">{used.toFixed(1)}</dd>
                       </div>
                       <div>
-                        <dt className="text-xs text-muted-foreground">Accrued</dt>
-                        <dd className="text-lg font-bold text-green-600">{accrued.toFixed(1)}</dd>
+                        <dt className="text-[11px] text-muted-foreground">Accrued</dt>
+                        <dd className="text-lg font-bold text-[#2DBDB6]">{accrued.toFixed(1)}</dd>
                       </div>
                     </dl>
                     <div className="w-full bg-muted rounded-full h-1.5">
@@ -104,7 +103,7 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
                         style={{ width: `${usedPct}%` }}
                       />
                     </div>
-                    <p className="text-xs text-center text-muted-foreground">{usedPct}% used</p>
+                    <p className="text-[11px] text-center text-muted-foreground">{usedPct}% used</p>
                   </div>
                 );
               })}
@@ -123,14 +122,14 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Start Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Hours</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Reason</TableHead>
-                  <TableHead>Submitted</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Type</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Start Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">End Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Hours</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Status</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Reason</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Submitted</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -146,11 +145,11 @@ export function PtoTab({ balances, requests }: PtoTabProps) {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium ${
-                          REQUEST_STATUS_COLORS[request.status] ?? "bg-gray-100 text-gray-800"
+                        className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-[11px] font-semibold capitalize ${
+                          REQUEST_STATUS_CLASSES[request.status] ?? "status-inactive"
                         }`}
                       >
-                        {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                        {request.status}
                       </span>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-[160px] truncate">

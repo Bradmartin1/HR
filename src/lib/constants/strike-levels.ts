@@ -8,10 +8,10 @@ export const STRIKE_LEVELS = {
 export type StrikeLevel = keyof typeof STRIKE_LEVELS;
 
 export const STRIKE_LEVEL_COLORS: Record<number, string> = {
-  1: "bg-yellow-100 text-yellow-800",
-  2: "bg-orange-100 text-orange-800",
-  3: "bg-red-100 text-red-800",
-  4: "bg-red-900 text-white",
+  1: "bg-[#fff4cc] text-[#7a5e00]",
+  2: "bg-[#fde8e1] text-[#a33a14]",
+  3: "bg-[#fde8e1] text-[#F15A22]",
+  4: "bg-[#130C0E] text-white",
 };
 
 export const STRIKE_CATEGORIES_DEFAULT = [

@@ -21,14 +21,14 @@ interface RecognitionTabProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  teamwork: "bg-blue-100 text-blue-800",
-  innovation: "bg-purple-100 text-purple-800",
-  leadership: "bg-amber-100 text-amber-800",
-  customer_service: "bg-green-100 text-green-800",
-  above_and_beyond: "bg-pink-100 text-pink-800",
-  safety: "bg-orange-100 text-orange-800",
-  attendance: "bg-teal-100 text-teal-800",
-  peer_recognition: "bg-indigo-100 text-indigo-800",
+  teamwork: "bg-[#e0f4f3] text-[#007384]",
+  innovation: "bg-[#fff4cc] text-[#7a5e00]",
+  leadership: "bg-[#e6f7f6] text-[#005f6d]",
+  customer_service: "bg-[#e0f4f3] text-[#007384]",
+  above_and_beyond: "bg-[#fff4cc] text-[#7a5e00]",
+  safety: "bg-[#fde8e1] text-[#a33a14]",
+  attendance: "bg-[#e6f7f6] text-[#005f6d]",
+  peer_recognition: "bg-[#e0f4f3] text-[#007384]",
 };
 
 export function RecognitionTab({ recognitions }: RecognitionTabProps) {
@@ -90,12 +90,12 @@ export function RecognitionTab({ recognitions }: RecognitionTabProps) {
                       <div className="flex items-start justify-between gap-2 flex-wrap">
                         <div className="flex items-center gap-2 flex-wrap">
                           {event.category_id && (
-                            <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                            <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium bg-[#e6f7f6] text-[#005f6d]">
                               Recognition
                             </span>
                           )}
                           {event.points != null && event.points > 0 && (
-                            <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 text-xs">
+                            <Badge className="bg-[#fff4cc] text-[#7a5e00] hover:bg-[#fff4cc] text-xs">
                               +{event.points} pts
                             </Badge>
                           )}

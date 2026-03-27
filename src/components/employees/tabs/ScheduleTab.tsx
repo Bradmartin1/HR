@@ -18,10 +18,10 @@ interface ScheduleTabProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  scheduled: "bg-blue-100 text-blue-800",
-  completed: "bg-green-100 text-green-800",
-  cancelled: "bg-gray-100 text-gray-800",
-  swapped: "bg-purple-100 text-purple-800",
+  scheduled: "bg-[#e0f4f3] text-[#007384]",
+  completed: "bg-[#e6f7f6] text-[#005f6d]",
+  cancelled: "bg-[#f0efee] text-[#5c5b59]",
+  swapped: "bg-[#fff4cc] text-[#7a5e00]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -57,7 +57,7 @@ export function ScheduleTab({ schedules }: ScheduleTabProps) {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Upcoming
             </p>
-            <p className="mt-1 text-3xl font-bold text-blue-600">{upcoming.length}</p>
+            <p className="mt-1 text-3xl font-bold text-[#007384]">{upcoming.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -65,7 +65,7 @@ export function ScheduleTab({ schedules }: ScheduleTabProps) {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Completed
             </p>
-            <p className="mt-1 text-3xl font-bold text-green-600">
+            <p className="mt-1 text-3xl font-bold text-[#2DBDB6]">
               {schedules.filter((s) => s.status === "completed").length}
             </p>
           </CardContent>

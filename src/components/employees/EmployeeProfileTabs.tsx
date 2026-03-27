@@ -47,7 +47,7 @@ export function EmployeeProfileTabs({ employeeId, role }: Props) {
   });
 
   return (
-    <div className="border-b overflow-x-auto">
+    <div className="border-b border-border overflow-x-auto">
       <nav className="flex gap-0 -mb-px min-w-max">
         {visibleTabs.map((tab) => {
           const href = `/employees/${employeeId}/${tab.value}`;
@@ -57,7 +57,7 @@ export function EmployeeProfileTabs({ employeeId, role }: Props) {
               key={tab.value}
               href={href}
               className={cn(
-                "px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition-colors",
+                "px-4 py-2.5 text-[13px] font-medium border-b-2 whitespace-nowrap transition-colors",
                 isActive
                   ? "border-primary text-primary"
                   : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"

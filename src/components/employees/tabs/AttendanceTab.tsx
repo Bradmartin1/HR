@@ -26,12 +26,12 @@ const EVENT_TYPE_LABELS: Record<string, string> = {
 };
 
 const EVENT_TYPE_COLORS: Record<string, string> = {
-  present: "bg-green-100 text-green-800",
-  absent: "bg-red-100 text-red-800",
-  tardy: "bg-yellow-100 text-yellow-800",
-  early_leave: "bg-orange-100 text-orange-800",
-  no_call_no_show: "bg-red-200 text-red-900",
-  excused: "bg-blue-100 text-blue-800",
+  present: "bg-[#e0f4f3] text-[#007384]",
+  absent: "bg-[#fde8e1] text-[#a33a14]",
+  tardy: "bg-[#fff4cc] text-[#7a5e00]",
+  early_leave: "bg-[#fff4cc] text-[#7a5e00]",
+  no_call_no_show: "bg-[#fde8e1] text-[#F15A22]",
+  excused: "bg-[#e6f7f6] text-[#005f6d]",
 };
 
 export function AttendanceTab({ events }: AttendanceTabProps) {
@@ -58,7 +58,7 @@ export function AttendanceTab({ events }: AttendanceTabProps) {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Present
             </p>
-            <p className="mt-1 text-3xl font-bold text-green-600">{presentDays}</p>
+            <p className="mt-1 text-3xl font-bold text-[#007384]">{presentDays}</p>
           </CardContent>
         </Card>
         <Card>
@@ -66,7 +66,7 @@ export function AttendanceTab({ events }: AttendanceTabProps) {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Absent
             </p>
-            <p className="mt-1 text-3xl font-bold text-red-600">{absentDays}</p>
+            <p className="mt-1 text-3xl font-bold text-[#F15A22]">{absentDays}</p>
           </CardContent>
         </Card>
         <Card>
@@ -74,7 +74,7 @@ export function AttendanceTab({ events }: AttendanceTabProps) {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Tardy
             </p>
-            <p className="mt-1 text-3xl font-bold text-yellow-600">{tardyDays}</p>
+            <p className="mt-1 text-3xl font-bold text-[#FFC20E]">{tardyDays}</p>
           </CardContent>
         </Card>
       </div>

@@ -62,7 +62,7 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Active Strikes
             </p>
-            <p className="mt-1 text-3xl font-bold text-red-600">{activeStrikes.length}</p>
+            <p className="mt-1 text-3xl font-bold text-[#F15A22]">{activeStrikes.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -98,7 +98,7 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                 {strikes.map((strike) => {
                   const level = strike.level as keyof typeof STRIKE_LEVELS | null;
                   const levelLabel = level ? STRIKE_LEVELS[level] : null;
-                  const levelColor = level ? STRIKE_LEVEL_COLORS[level] : "bg-gray-100 text-gray-800";
+                  const levelColor = level ? STRIKE_LEVEL_COLORS[level] : "bg-[#f0efee] text-[#5c5b59]";
                   const linkedActions = strike.id ? (actionsByStrike[strike.id] ?? []) : [];
 
                   return (
@@ -106,7 +106,7 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                       {/* Timeline dot */}
                       <div
                         className={`absolute -left-10 top-1.5 w-4 h-4 rounded-full border-2 border-background ${
-                          strike.voided ? "bg-gray-300" : level && level >= 3 ? "bg-red-500" : "bg-amber-400"
+                          strike.voided ? "bg-[#8E9089]" : level && level >= 3 ? "bg-[#F15A22]" : "bg-[#FFC20E]"
                         }`}
                       />
                       <div
@@ -124,12 +124,12 @@ export function StrikesTab({ strikes, disciplinaryActions }: StrikesTabProps) {
                               </span>
                             )}
                             {(strike.strike_categories as { name: string } | null)?.name && (
-                              <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-800">
+                              <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium bg-[#f0efee] text-[#5c5b59]">
                                 {(strike.strike_categories as { name: string } | null)?.name?.replace(/_/g, " ")}
                               </span>
                             )}
                             {strike.voided && (
-                              <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100 text-xs">
+                              <Badge className="bg-[#f0efee] text-[#5c5b59] hover:bg-[#f0efee] text-xs">
                                 Voided
                               </Badge>
                             )}

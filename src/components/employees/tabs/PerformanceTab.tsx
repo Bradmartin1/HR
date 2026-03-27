@@ -46,19 +46,19 @@ interface PerformanceTabProps {
 }
 
 const REVIEW_STATUS_COLORS: Record<string, string> = {
-  draft: "bg-gray-100 text-gray-800",
-  in_progress: "bg-blue-100 text-blue-800",
-  submitted: "bg-yellow-100 text-yellow-800",
-  completed: "bg-green-100 text-green-800",
-  acknowledged: "bg-purple-100 text-purple-800",
+  draft: "bg-[#f0efee] text-[#5c5b59]",
+  in_progress: "bg-[#e0f4f3] text-[#007384]",
+  submitted: "bg-[#fff4cc] text-[#7a5e00]",
+  completed: "bg-[#e6f7f6] text-[#005f6d]",
+  acknowledged: "bg-[#e0f4f3] text-[#007384]",
 };
 
 const GOAL_STATUS_COLORS: Record<string, string> = {
-  not_started: "bg-gray-100 text-gray-800",
-  in_progress: "bg-blue-100 text-blue-800",
-  completed: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
-  overdue: "bg-red-100 text-red-800",
+  not_started: "bg-[#f0efee] text-[#5c5b59]",
+  in_progress: "bg-[#e0f4f3] text-[#007384]",
+  completed: "bg-[#e6f7f6] text-[#005f6d]",
+  cancelled: "bg-[#fde8e1] text-[#a33a14]",
+  overdue: "bg-[#fde8e1] text-[#F15A22]",
 };
 
 function RatingStars({ rating }: { rating: number | null }) {
@@ -84,13 +84,13 @@ export function PerformanceTab({ reviews, goals, employeeId }: PerformanceTabPro
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Review Cycle</TableHead>
-                  <TableHead>Cycle Period</TableHead>
-                  <TableHead>Overall Rating</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Completed</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Review Cycle</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Cycle Period</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Overall Rating</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Status</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Completed</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -148,12 +148,12 @@ export function PerformanceTab({ reviews, goals, employeeId }: PerformanceTabPro
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Goal</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Progress</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Completed</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Goal</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Status</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Progress</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Due Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Completed</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

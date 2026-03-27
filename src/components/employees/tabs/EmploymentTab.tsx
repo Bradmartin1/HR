@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -37,17 +36,17 @@ interface EmploymentTabProps {
   assignments: Assignment[];
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  active: "bg-green-100 text-green-800",
-  inactive: "bg-gray-100 text-gray-800",
-  terminated: "bg-red-100 text-red-800",
-  on_leave: "bg-yellow-100 text-yellow-800",
+const STATUS_CLASSES: Record<string, string> = {
+  active: "status-active",
+  inactive: "status-inactive",
+  terminated: "status-terminated",
+  on_leave: "status-on-leave",
 };
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+      <dt className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
         {label}
       </dt>
       <dd className="mt-1 text-sm">{value}</dd>
@@ -75,8 +74,8 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
               label="Status"
               value={
                 <span
-                  className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold ${
-                    STATUS_COLORS[employee.status] ?? "bg-gray-100 text-gray-800"
+                  className={`inline-flex items-center rounded-md px-2.5 py-0.5 text-[11px] font-semibold capitalize ${
+                    STATUS_CLASSES[employee.status] ?? "status-inactive"
                   }`}
                 >
                   {employee.status.replace(/_/g, " ")}
@@ -85,7 +84,7 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
             />
             <Field
               label="Employment Type"
-              value={employee.employment_type.replace(/_/g, " ")}
+              value={<span className="capitalize">{employee.employment_type.replace(/_/g, " ")}</span>}
             />
             <Field label="Hire Date" value={formatDate(employee.hire_date)} />
             <Field
@@ -100,7 +99,9 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
               label="CDL Driver"
               value={
                 employee.is_driver ? (
-                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Yes</Badge>
+                  <span className="inline-flex items-center rounded-md px-2.5 py-0.5 text-[11px] font-semibold bg-[#e0f4f3] text-[#007384]">
+                    Yes
+                  </span>
                 ) : (
                   "No"
                 )
@@ -114,11 +115,16 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
                     <span
                       className={
                         new Date(employee.cdl_expiry) < new Date()
-                          ? "text-red-600 font-medium"
+                          ? "text-[#F15A22] font-medium"
                           : ""
                       }
                     >
                       {formatDate(employee.cdl_expiry)}
+                      {new Date(employee.cdl_expiry) < new Date() && (
+                        <span className="ml-2 inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold status-overdue">
+                          Expired
+                        </span>
+                      )}
                     </span>
                   ) : (
                     "—"
@@ -140,14 +146,14 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Effective Date</TableHead>
-                  <TableHead>End Date</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Job Title</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Notes</TableHead>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-[11px] uppercase tracking-wide">Effective Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">End Date</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Department</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Job Title</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Location</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Type</TableHead>
+                  <TableHead className="text-[11px] uppercase tracking-wide">Notes</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -155,7 +161,11 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
                   <TableRow key={a.id}>
                     <TableCell className="text-sm">{formatDate(a.effective_date)}</TableCell>
                     <TableCell className="text-sm">
-                      {a.end_date ? formatDate(a.end_date) : <span className="text-muted-foreground">Current</span>}
+                      {a.end_date ? formatDate(a.end_date) : (
+                        <span className="inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold status-active">
+                          Current
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-sm">
                       {(a.departments as { name: string } | null)?.name ?? "—"}
@@ -166,7 +176,7 @@ export function EmploymentTab({ employee, assignments }: EmploymentTabProps) {
                     <TableCell className="text-sm">
                       {(a.locations as { name: string } | null)?.name ?? "—"}
                     </TableCell>
-                    <TableCell className="text-sm">
+                    <TableCell className="text-sm capitalize">
                       {a.assignment_type ? a.assignment_type.replace(/_/g, " ") : "—"}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
