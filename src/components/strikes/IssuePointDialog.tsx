@@ -111,7 +111,7 @@ export function IssuePointDialog({ employeeId, employeeName, currentPoints, trig
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button size="sm" className="gap-2" style={{ backgroundColor: "hsl(188 100% 26%)" }}>
+          <Button size="sm" className="gap-2">
             <Plus className="h-4 w-4" /> Issue Point
           </Button>
         )}
