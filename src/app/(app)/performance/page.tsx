@@ -5,7 +5,7 @@ import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Calendar, Users } from "lucide-react";
+import { TrendingUp, Calendar, Users, CheckCircle2, Hourglass, FileText } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
 
 const STATUS_STYLES: Record<string, { label: string; bg: string; text: string }> = {
@@ -31,12 +31,74 @@ export default async function PerformancePage() {
     `)
     .order("created_at", { ascending: false });
 
+  const cycleList = cycles ?? [];
+  const activeCycles = cycleList.filter(c => c.status === "active").length;
+  const allReviews = cycleList.flatMap(c => Array.isArray(c.performance_reviews) ? c.performance_reviews : []);
+  const pendingReviews = allReviews.filter((r: { status: string }) => r.status === "pending").length;
+  const completedReviews = allReviews.filter((r: { status: string }) => ["submitted", "acknowledged", "finalized"].includes(r.status)).length;
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Performance Reviews"
         description="Manage review cycles and track employee performance"
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Cycles</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{activeCycles}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <TrendingUp className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Pending Reviews</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{pendingReviews}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <Hourglass className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Completed</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{completedReviews}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(45,189,182,0.1)" }}>
+                <CheckCircle2 className="h-4 w-4" style={{ color: "#2DBDB6" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Reviews</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{allReviews.length}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,0,0,0.04)" }}>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {!cycles || cycles.length === 0 ? (
         <Card>

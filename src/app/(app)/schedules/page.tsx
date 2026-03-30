@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock } from "lucide-react";
+import { Clock, Users, CalendarDays, MapPin } from "lucide-react";
 import Link from "next/link";
 
 export default async function SchedulesPage() {
@@ -43,6 +43,16 @@ export default async function SchedulesPage() {
   }
 
   const dates = Object.keys(grouped).sort();
+  const allSchedules = schedules ?? [];
+  const totalShifts = allSchedules.length;
+  const uniqueEmpIds = new Set(allSchedules.map(s => {
+    const emp = s.employee as unknown as { id: string } | null;
+    return emp?.id;
+  }).filter(Boolean)).size;
+  const uniqueLocations = new Set(allSchedules.map(s => {
+    const loc = s.locations as unknown as { name: string } | null;
+    return loc?.name;
+  }).filter(Boolean)).size;
 
   return (
     <div className="space-y-6">
@@ -50,6 +60,49 @@ export default async function SchedulesPage() {
         title="Schedules"
         description="Upcoming shifts for the next 2 weeks"
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Shifts</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalShifts}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <CalendarDays className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Employees</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{uniqueEmpIds}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(45,189,182,0.1)" }}>
+                <Users className="h-4 w-4" style={{ color: "#2DBDB6" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Locations</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{uniqueLocations}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <MapPin className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {dates.length === 0 ? (
         <Card>

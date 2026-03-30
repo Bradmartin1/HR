@@ -3,7 +3,8 @@ import { getSession } from "@/lib/auth/getSession";
 import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Calendar, AlertTriangle, TrendingUp, Download } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Users, Calendar, AlertTriangle, TrendingUp, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 const REPORT_CATEGORIES = [
@@ -58,11 +59,18 @@ export default async function ReportsPage() {
   if (!session) redirect("/login");
   if (!hasPermission(session.role, "reports.full")) redirect("/dashboard");
 
+  const totalReports = REPORT_CATEGORIES.reduce((sum, cat) => sum + cat.reports.length, 0);
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Reports"
         description="Workforce analytics and HR reporting"
+        badge={
+          <Badge variant="outline" className="text-[10px] font-medium">
+            {totalReports} reports · {REPORT_CATEGORIES.length} categories
+          </Badge>
+        }
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -71,11 +79,14 @@ export default async function ReportsPage() {
           return (
             <Card key={cat.title}>
               <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-lg p-1.5" style={{ backgroundColor: cat.colorLight }}>
-                    <Icon className="h-4 w-4" style={{ color: cat.color }} />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-lg p-1.5" style={{ backgroundColor: cat.colorLight }}>
+                      <Icon className="h-4 w-4" style={{ color: cat.color }} />
+                    </div>
+                    <CardTitle className="text-sm font-semibold">{cat.title}</CardTitle>
                   </div>
-                  <CardTitle className="text-sm font-semibold">{cat.title}</CardTitle>
+                  <span className="text-[10px] text-muted-foreground">{cat.reports.length} reports</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-1">
@@ -83,10 +94,10 @@ export default async function ReportsPage() {
                   <Link key={report.label} href={report.href}>
                     <div className="group flex items-center justify-between rounded-md px-3 py-2.5 transition-colors hover:bg-muted cursor-pointer">
                       <div>
-                        <div className="text-sm font-medium text-foreground">{report.label}</div>
+                        <div className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">{report.label}</div>
                         <div className="text-xs text-muted-foreground">{report.description}</div>
                       </div>
-                      <Download className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </Link>
                 ))}

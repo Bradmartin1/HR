@@ -5,7 +5,7 @@ import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Users, Hash, TrendingDown } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
 import Link from "next/link";
 import { PointsBadge } from "@/components/strikes/PointsBadge";
@@ -31,6 +31,15 @@ export default async function StrikesPage() {
     .order("incident_date", { ascending: false })
     .limit(100);
 
+  const strikeList = strikes ?? [];
+  const totalPoints = strikeList.reduce((sum, s) => sum + (s.points ?? 0), 0);
+  const uniqueEmployees = new Set(strikeList.map(s => {
+    const emp = s.employee as unknown as { id: string } | null;
+    return emp?.id;
+  }).filter(Boolean)).size;
+  const totalEvents = strikeList.length;
+  const avgPoints = totalEvents > 0 ? (totalPoints / totalEvents).toFixed(1) : "0";
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -43,6 +52,62 @@ export default async function StrikesPage() {
           </div>
         }
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="stat-card-orange">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Points</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalPoints}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(241,90,34,0.08)" }}>
+                <AlertTriangle className="h-4 w-4" style={{ color: "#F15A22" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Events</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalEvents}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <Hash className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Employees</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{uniqueEmployees}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <Users className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Avg Pts/Event</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{avgPoints}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(45,189,182,0.1)" }}>
+                <TrendingDown className="h-4 w-4" style={{ color: "#2DBDB6" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {!strikes || strikes.length === 0 ? (
         <Card>

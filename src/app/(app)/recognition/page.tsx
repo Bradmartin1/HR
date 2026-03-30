@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Award } from "lucide-react";
+import { Award, Star, Users, Trophy } from "lucide-react";
 import { formatRelative } from "@/lib/utils/format";
 
 export default async function RecognitionPage() {
@@ -25,12 +25,79 @@ export default async function RecognitionPage() {
     .order("created_at", { ascending: false })
     .limit(50);
 
+  const eventList = events ?? [];
+  const totalPoints = eventList.reduce((sum, e) => sum + (e.points ?? 0), 0);
+  const uniqueRecipients = new Set(eventList.map(e => {
+    const r = e.recipient as unknown as { first_name: string; last_name: string } | null;
+    return r ? `${r.first_name} ${r.last_name}` : null;
+  }).filter(Boolean)).size;
+  const uniqueCategories = new Set(eventList.map(e => {
+    const c = e.category as unknown as { name: string } | null;
+    return c?.name;
+  }).filter(Boolean)).size;
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Recognition"
         description="Celebrating our team's achievements and contributions"
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Awards</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{eventList.length}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <Award className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Points Given</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalPoints}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(45,189,182,0.1)" }}>
+                <Star className="h-4 w-4" style={{ color: "#2DBDB6" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Recipients</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{uniqueRecipients}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <Users className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Categories</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{uniqueCategories}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,0,0,0.04)" }}>
+                <Trophy className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {!events || events.length === 0 ? (
         <Card>

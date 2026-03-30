@@ -5,7 +5,7 @@ import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { UserCheck } from "lucide-react";
+import { UserCheck, Clock, XCircle, AlertTriangle, ShieldOff } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
 import Link from "next/link";
 
@@ -39,12 +39,74 @@ export default async function AttendancePage() {
     .order("created_at", { ascending: false })
     .limit(100);
 
+  const eventList = events ?? [];
+  const absentCount = eventList.filter(e => e.event_type === "absent").length;
+  const tardyCount = eventList.filter(e => e.event_type === "tardy").length;
+  const ncnsCount = eventList.filter(e => e.event_type === "ncns").length;
+  const otherCount = eventList.filter(e => !["absent", "tardy", "ncns"].includes(e.event_type)).length;
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Attendance"
         description="Non-present attendance events from the last 30 days"
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Events</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{eventList.length}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <UserCheck className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-orange">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Absences</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{absentCount}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(241,90,34,0.08)" }}>
+                <XCircle className="h-4 w-4" style={{ color: "#F15A22" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Tardies</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{tardyCount}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <Clock className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">No Call/Show</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{ncnsCount}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(241,90,34,0.06)" }}>
+                <ShieldOff className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {!events || events.length === 0 ? (
         <Card>

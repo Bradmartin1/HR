@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ClipboardCheck } from "lucide-react";
+import { ClipboardCheck, Users, CheckCircle2, ListTodo } from "lucide-react";
 import Link from "next/link";
 
 export default async function OnboardingPage() {
@@ -30,12 +30,81 @@ export default async function OnboardingPage() {
 
   const withOnboarding = (employees ?? []).filter(e => Array.isArray(e.employee_onboarding_progress) && e.employee_onboarding_progress.length > 0);
 
+  // Compute stats
+  const totalOnboarding = withOnboarding.length;
+  const completionData = withOnboarding.map(emp => {
+    const tasks = Array.isArray(emp.employee_onboarding_progress) ? emp.employee_onboarding_progress : [];
+    const completed = tasks.filter((t: { status: string }) => t.status === "completed").length;
+    return { total: tasks.length, completed };
+  });
+  const fullyComplete = completionData.filter(d => d.total > 0 && d.completed === d.total).length;
+  const avgCompletion = completionData.length > 0
+    ? Math.round(completionData.reduce((sum, d) => sum + (d.total > 0 ? (d.completed / d.total) * 100 : 0), 0) / completionData.length)
+    : 0;
+  const totalTasks = completionData.reduce((sum, d) => sum + d.total, 0);
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Onboarding"
         description="Track new hire onboarding progress"
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">In Progress</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalOnboarding - fullyComplete}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <Users className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Completed</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{fullyComplete}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(45,189,182,0.1)" }}>
+                <CheckCircle2 className="h-4 w-4" style={{ color: "#2DBDB6" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Avg Progress</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{avgCompletion}%</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <ListTodo className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Tasks</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalTasks}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,0,0,0.04)" }}>
+                <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {withOnboarding.length === 0 ? (
         <Card>

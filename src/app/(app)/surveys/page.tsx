@@ -5,7 +5,7 @@ import { hasPermission } from "@/lib/auth/permissions";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, Calendar, Users, Lock } from "lucide-react";
+import { ClipboardList, Calendar, Users, Lock, CheckCircle2, MessageSquare } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
@@ -26,12 +26,73 @@ export default async function SurveysPage() {
     .select(`id, title, description, status, is_anonymous, target_audience, opens_at, closes_at, created_at, departments(name), survey_responses(id)`)
     .order("created_at", { ascending: false });
 
+  const surveyList = surveys ?? [];
+  const activeSurveys = surveyList.filter(s => s.status === "active").length;
+  const closedSurveys = surveyList.filter(s => s.status === "closed").length;
+  const totalResponses = surveyList.reduce((sum, s) => sum + (Array.isArray(s.survey_responses) ? s.survey_responses.length : 0), 0);
+
   return (
     <div className="space-y-6">
       <PageHeader
         title="Surveys"
         description="Gather employee feedback and measure engagement"
       />
+
+      {/* ── Summary Stats ── */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="stat-card-teal">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Surveys</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{surveyList.length}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,115,132,0.08)" }}>
+                <ClipboardList className="h-4 w-4" style={{ color: "#007384" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-accent">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{activeSurveys}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(45,189,182,0.1)" }}>
+                <CheckCircle2 className="h-4 w-4" style={{ color: "#2DBDB6" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="stat-card-gold">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Responses</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{totalResponses}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(255,194,14,0.1)" }}>
+                <MessageSquare className="h-4 w-4" style={{ color: "#d4a000" }} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Closed</p>
+                <p className="mt-1 text-2xl font-bold text-foreground">{closedSurveys}</p>
+              </div>
+              <div className="rounded-lg p-1.5" style={{ backgroundColor: "rgba(0,0,0,0.04)" }}>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {!surveys || surveys.length === 0 ? (
         <Card>
